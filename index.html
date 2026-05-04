@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>St. Louis City MO — Motivated Seller Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f6f8;
+  --panel: #ffffff;
+  --border: #e5e7eb;
+  --border-strong: #d1d5db;
+  --text: #111827;
+  --text-2: #4b5563;
+  --text-3: #6b7280;
+  --text-4: #9ca3af;
+  --blue: #2563eb;
+  --blue-50: #eff6ff;
+  --blue-100: #dbeafe;
+  --red: #dc2626;
+  --red-50: #fef2f2;
+  --red-100: #fee2e2;
+  --orange: #f97316;
+  --orange-50: #fff7ed;
+  --orange-100: #ffedd5;
+  --amber: #f59e0b;
+  --amber-50: #fffbeb;
+  --green: #16a34a;
+  --green-50: #f0fdf4;
+  --green-100: #dcfce7;
+  --purple: #9333ea;
+  --gray-cell: #f9fafb;
+  --hover-row: #fafbfc;
+  --shadow-modal: rgba(15,23,42,0.55);
+}
+
+html[data-theme="dark"] {
+  --bg: #0b1220;
+  --panel: #131b2e;
+  --border: #243049;
+  --border-strong: #2f3d5c;
+  --text: #e6ebf5;
+  --text-2: #b3bdd1;
+  --text-3: #8693ad;
+  --text-4: #5d6b86;
+  --blue: #4a8fee;
+  --blue-50: #16223e;
+  --blue-100: #1e2f55;
+  --red: #f87171;
+  --red-50: #2a1717;
+  --red-100: #3a1d1d;
+  --orange: #fb923c;
+  --orange-50: #2a1c10;
+  --orange-100: #3a2614;
+  --amber: #fbbf24;
+  --amber-50: #2a2210;
+  --green: #4ade80;
+  --green-50: #102818;
+  --green-100: #163d22;
+  --purple: #c084fc;
+  --gray-cell: #0f172a;
+  --hover-row: #18223a;
+  --shadow-modal: rgba(0,0,0,0.7);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--bg); color: var(--text); font-family: "Inter", system-ui, sans-serif; font-size: 14px; line-height: 1.5; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+input { font-family: inherit; }
+a { color: inherit; text-decoration: none; }
+
+/* Top bar */
+.app { display: grid; grid-template-rows: auto 1fr; min-height: 100vh; }
+.topbar { background: var(--panel); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand-logo { width: 48px; height: 48px; border-radius: 10px; background: linear-gradient(135deg, #0b2e4f 0%, #c8102e 100%); display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+.brand-text h1 { font-size: 20px; font-weight: 800; letter-spacing: -0.3px; line-height: 1.1; }
+.brand-text p { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+.topbar-right { display: flex; align-items: center; gap: 14px; }
+.update-pill { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-2); }
+.dot-live { width: 8px; height: 8px; border-radius: 50%; background: #16a34a; box-shadow: 0 0 0 3px rgba(22,163,74,0.18); }
+.btn-primary { background: var(--blue); color: white; padding: 10px 16px; border-radius: 8px; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; }
+.btn-primary:hover { filter: brightness(0.92); }
+.btn-ghost { background: var(--panel); color: var(--text); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); font-weight: 500; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; }
+.btn-ghost:hover { background: var(--gray-cell); }
+.theme-toggle { padding: 8px 10px; }
+.theme-toggle .icon-moon { display: none; }
+html[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+html[data-theme="dark"] .theme-toggle .icon-moon { display: inline-block; }
+
+/* Action bar */
+.actionbar { padding: 14px 24px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; background: var(--bg); }
+.actionbar .left { display: flex; gap: 10px; flex-wrap: wrap; }
+.actionbar .right { margin-left: auto; display: flex; gap: 10px; }
+.btn-calc { background: var(--blue); color: white; padding: 10px 16px; border-radius: 8px; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; }
+.stat-pill { background: var(--panel); border: 1px solid var(--border); padding: 10px 14px; border-radius: 8px; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; font-weight: 500; }
+.stat-pill .num { font-weight: 700; color: var(--blue); }
+
+/* Layout */
+.layout { display: grid; grid-template-columns: 240px 1fr; gap: 16px; padding: 0 24px 24px; }
+
+/* Sidebar */
+.sidebar { display: flex; flex-direction: column; gap: 16px; }
+.side-panel { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+.side-panel h3 { font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.8px; padding: 4px 8px 12px; }
+.lead-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 10px; border-radius: 8px; cursor: pointer; transition: background 0.12s; margin-bottom: 2px; }
+.lead-row:hover { background: var(--gray-cell); }
+.lead-row.active { background: var(--blue-50); color: var(--blue); }
+.lead-row.active .lead-count { background: var(--blue); color: white; }
+.lead-row .lead-name { display: flex; align-items: center; gap: 10px; font-weight: 500; font-size: 13px; }
+.lead-row .lead-icon { width: 22px; display: inline-flex; justify-content: center; }
+.lead-count { background: #eef0f3; color: var(--text-2); font-weight: 600; font-size: 11px; padding: 3px 8px; border-radius: 10px; min-width: 30px; text-align: center; }
+
+/* Stat cards */
+.stat-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 16px; }
+.stat-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 14px; }
+.stat-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.stat-icon.blue { background: var(--blue-50); color: var(--blue); }
+.stat-icon.red { background: var(--red-50); color: var(--red); }
+.stat-icon.orange { background: var(--orange-50); color: var(--orange); }
+.stat-icon.green { background: var(--green-50); color: var(--green); }
+.stat-icon.purple { background: var(--blue-50); color: var(--purple); }
+.stat-num { font-family: "Inter", sans-serif; font-size: 22px; font-weight: 800; color: var(--blue); letter-spacing: -0.5px; line-height: 1.1; }
+.stat-num.red { color: var(--red); }
+.stat-num.orange { color: var(--orange); }
+.stat-num.green { color: var(--green); }
+.stat-num.purple { color: var(--purple); }
+.stat-label { font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 3px; font-weight: 600; }
+
+/* Type legend */
+.type-legend { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 12px 18px; display: flex; gap: 24px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+.type-legend .item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.type-legend .item .dot { width: 9px; height: 9px; border-radius: 50%; }
+.type-legend .item .num { font-weight: 700; }
+
+/* Filter bar */
+.filter-bar { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 12px; display: flex; gap: 10px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+.search-wrap { flex: 1; min-width: 240px; position: relative; }
+.search-wrap input { width: 100%; padding: 9px 12px 9px 36px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; background: var(--gray-cell); }
+.search-wrap input:focus { outline: none; border-color: var(--blue); background: var(--panel); }
+.search-wrap .icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-4); }
+.select-pill { padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; background: var(--panel); font-weight: 500; cursor: pointer; }
+.chip-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip { padding: 8px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; font-weight: 500; background: var(--panel); cursor: pointer; transition: all 0.12s; }
+.chip:hover { background: var(--gray-cell); }
+.chip.active { background: var(--blue); color: white; border-color: var(--blue); }
+.chip.icon-chip { display: inline-flex; align-items: center; gap: 6px; }
+
+/* Table */
+.results-row { display: flex; justify-content: space-between; align-items: center; padding: 0 4px; margin-bottom: 10px; font-size: 13px; color: var(--text-3); }
+.table-wrap { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+thead { background: var(--gray-cell); }
+thead th { font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.7px; padding: 12px 10px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+tbody td { padding: 14px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: var(--hover-row); }
+
+.score-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 38px; height: 30px; padding: 0 8px; border-radius: 6px; color: white; font-weight: 700; font-size: 13px; font-family: "JetBrains Mono", monospace; }
+.score-100 { background: var(--red); }
+.score-80 { background: #ea580c; }
+.score-60 { background: #f59e0b; }
+.score-40 { background: #facc15; color: #422006; }
+.score-low { background: #94a3b8; }
+
+.type-badge { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+.type-badge.lis { color: var(--red); }
+.type-badge.fc { color: var(--orange); }
+.type-badge.tax { color: var(--amber); }
+.type-badge.judg { color: var(--purple); }
+.type-badge.lien { color: var(--blue); }
+.type-badge.prob { color: var(--green); }
+
+.score-meta { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; margin-top: 6px; letter-spacing: 0.5px; }
+.score-meta.low { background: var(--blue-100); color: var(--blue); }
+.score-meta.med { background: var(--amber-50); color: var(--amber); }
+.score-meta.high { background: var(--red-100); color: var(--red); }
+
+.owner-cell { font-weight: 600; font-size: 13px; }
+.owner-via { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+.addr-line1 { font-weight: 500; font-size: 12px; }
+.addr-line2 { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+.amount { font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 13px; }
+
+.flag-list { display: flex; flex-direction: column; gap: 4px; }
+.flag-pill { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 4px; background: var(--gray-cell); color: var(--text-2); border: 1px solid var(--border); width: fit-content; font-weight: 500; }
+.flag-pill.hot { background: var(--red-50); color: var(--red); border-color: var(--red-100); }
+.flag-pill.warn { background: var(--amber-50); color: var(--amber); border-color: var(--orange-100); }
+.flag-pill.info { background: var(--blue-50); color: var(--blue); border-color: var(--blue-100); }
+
+.doc-link { color: var(--blue); font-weight: 600; font-size: 12px; display: inline-flex; align-items: center; gap: 4px; }
+.doc-link:hover { text-decoration: underline; }
+.doc-num { font-family: "JetBrains Mono", monospace; font-size: 11px; color: var(--text-3); margin-bottom: 4px; }
+
+/* Footer / pagination */
+.tfoot { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; background: var(--gray-cell); border-top: 1px solid var(--border); font-size: 13px; }
+.rows-per-page { display: flex; align-items: center; gap: 8px; color: var(--text-3); }
+.rows-per-page select { padding: 5px 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: var(--panel); }
+.pagination { display: flex; gap: 4px; align-items: center; }
+.pg-btn { width: 30px; height: 30px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; cursor: pointer; color: var(--text-2); font-weight: 500; }
+.pg-btn:hover { background: var(--panel); }
+.pg-btn.active { background: var(--blue); color: white; }
+
+/* Manual source cards (RED) */
+.section-divider { padding: 22px 24px 8px; }
+.section-divider h2 { font-size: 17px; font-weight: 700; letter-spacing: -0.2px; }
+.section-divider p { font-size: 13px; color: var(--text-3); margin-top: 4px; }
+.manual-grid { padding: 0 24px 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 14px; }
+.manual-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.manual-card .header { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.manual-card .header.red { background: linear-gradient(0deg, var(--red-50), var(--panel)); }
+.manual-card .header.yellow { background: linear-gradient(0deg, var(--amber-50), var(--panel)); }
+.manual-card .header h4 { font-size: 14px; font-weight: 700; }
+.manual-card .header .sub { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+.tier-tag { font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.7px; }
+.tier-tag.red { background: var(--red); color: white; }
+.tier-tag.yellow { background: var(--amber); color: white; }
+.manual-card .body { padding: 14px 16px; }
+.manual-card ol { padding-left: 18px; font-size: 12px; color: var(--text-2); }
+.manual-card ol li { margin-bottom: 5px; line-height: 1.55; }
+.manual-card .actions { display: flex; gap: 8px; padding: 0 16px 14px; flex-wrap: wrap; }
+.manual-card .btn-sm { padding: 7px 12px; font-size: 12px; border-radius: 6px; font-weight: 600; }
+.btn-sm.primary { background: var(--blue); color: white; }
+.btn-sm.ghost { background: var(--panel); color: var(--text); border: 1px solid var(--border); }
+.btn-sm.danger { background: var(--red); color: white; }
+
+/* Modal (Calculator + Comps) */
+.modal-overlay { position: fixed; inset: 0; background: var(--shadow-modal); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+.modal-overlay.show { display: flex; }
+.modal { background: var(--panel); border-radius: 14px; width: 100%; max-width: 720px; max-height: 88vh; overflow: auto; box-shadow: 0 24px 60px rgba(0,0,0,0.25); }
+.modal-head { padding: 18px 22px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--panel); z-index: 1; }
+.modal-head h3 { font-size: 16px; font-weight: 700; }
+.modal-close { width: 32px; height: 32px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; color: var(--text-3); }
+.modal-close:hover { background: var(--gray-cell); }
+.modal-body { padding: 22px; }
+.calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.calc-field { display: flex; flex-direction: column; gap: 4px; }
+.calc-field label { font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.6px; }
+.calc-field input, .calc-field select { padding: 9px 11px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; background: var(--panel); font-family: "JetBrains Mono", monospace; }
+.calc-field input:focus, .calc-field select:focus { outline: none; border-color: var(--blue); }
+.calc-result { margin-top: 18px; padding: 18px; background: var(--blue-50); border: 1px solid var(--blue-100); border-radius: 12px; }
+.calc-result .label { font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.6px; }
+.calc-result .value { font-family: "Inter", sans-serif; font-size: 30px; font-weight: 800; color: var(--blue); margin-top: 4px; letter-spacing: -0.5px; }
+.calc-result .breakdown { margin-top: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px; }
+.calc-result .breakdown div { display: flex; justify-content: space-between; padding: 5px 0; }
+.calc-result .breakdown span:first-child { color: var(--text-3); }
+.calc-result .breakdown span:last-child { font-family: "JetBrains Mono", monospace; font-weight: 600; }
+
+/* Comp table */
+.comp-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
+.comp-table th { padding: 10px; background: var(--gray-cell); font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-3); text-align: left; border-bottom: 1px solid var(--border); }
+.comp-table td { padding: 10px; border-bottom: 1px solid var(--border); }
+.comp-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 14px 0; }
+.comp-stat { background: var(--gray-cell); padding: 12px; border-radius: 10px; text-align: center; }
+.comp-stat .v { font-family: "Inter", sans-serif; font-weight: 800; font-size: 20px; color: var(--text); letter-spacing: -0.3px; }
+.comp-stat .l { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.6px; margin-top: 4px; }
+
+/* Toast */
+.toast { position: fixed; bottom: 20px; right: 20px; background: var(--text); color: var(--panel); padding: 14px 20px; border-radius: 10px; font-size: 13px; box-shadow: 0 8px 24px rgba(0,0,0,0.25); transform: translateY(100px); opacity: 0; transition: all 0.25s; z-index: 200; }
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* Tab nav */
+.tabs { display: flex; gap: 2px; padding: 0 24px; background: var(--bg); border-bottom: 1px solid var(--border); }
+.tab { padding: 12px 18px; font-size: 13px; font-weight: 600; color: var(--text-3); cursor: pointer; border-bottom: 2px solid transparent; }
+.tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+.tab:hover { color: var(--text); }
+
+.view { display: none; }
+.view.active { display: block; }
+
+/* Tier banner inside leads view */
+.tier-strip { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; margin-bottom: 12px; display: flex; gap: 22px; align-items: center; font-size: 12px; flex-wrap: wrap; }
+.tier-strip .item { display: flex; align-items: center; gap: 8px; }
+.tier-strip .swatch { width: 12px; height: 12px; border-radius: 3px; }
+
+@media (max-width: 1100px) {
+  .layout { grid-template-columns: 1fr; }
+  .stat-row { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-logo">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Gateway Arch">
+          <path d="M3 28 C 3 10, 16 4, 16 4 C 16 4, 29 10, 29 28" stroke="white" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+          <path d="M5.4 28 C 5.4 12, 16 7, 16 7 C 16 7, 26.6 12, 26.6 28" stroke="white" stroke-width="0.9" stroke-linecap="round" fill="none" opacity="0.55"/>
+          <line x1="2" y1="28.5" x2="30" y2="28.5" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>St. Louis City MO</h1>
+        <p>Motivated Seller Intelligence</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="update-pill">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Updated <span id="last-updated">May 3, 11:35 AM</span>
+        <span class="dot-live"></span>
+      </div>
+      <button class="btn-ghost theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark mode">
+        <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <button class="btn-primary" onclick="exportGHL()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        GHL CSV
+      </button>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab active" data-tab="leads">Leads</div>
+    <div class="tab" data-tab="manual">Manual Sources</div>
+    <div class="tab" data-tab="comps">Comp Tool</div>
+    <div class="tab" data-tab="sources">Source Status</div>
+  </div>
+
+  <!-- ===== LEADS VIEW ===== -->
+  <div class="view active" id="view-leads">
+
+    <!-- ACTION BAR -->
+    <div class="actionbar">
+      <div class="left">
+        <button class="btn-calc" onclick="openCalculator()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="13" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="13" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="10" y2="18"/><line x1="13" y1="18" x2="16" y2="18"/></svg>
+          Calculator
+        </button>
+        <button class="btn-ghost">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Import Tax List
+        </button>
+        <button class="btn-ghost" onclick="exportSkipTrace()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Skip Trace CSV
+        </button>
+        <button class="btn-ghost" onclick="exportGHL()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          GHL CSV
+        </button>
+      </div>
+      <div class="right">
+        <div class="stat-pill"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg> TAX: <span class="num" id="tax-count">8,412</span> imported</div>
+        <div class="stat-pill"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg> <span class="num" id="stacked-count">37</span> STACKED</div>
+      </div>
+    </div>
+
+    <div class="layout">
+
+      <!-- SIDEBAR -->
+      <div class="sidebar">
+        <div class="side-panel">
+          <h3>Lead Types</h3>
+          <div class="lead-row active" data-filter="all" onclick="filterLeads('all')">
+            <div class="lead-name"><span class="lead-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg></span> All</div>
+            <span class="lead-count" id="count-all">0</span>
+          </div>
+          <div class="lead-row" data-filter="lis_pendens" onclick="filterLeads('lis_pendens')">
+            <div class="lead-name"><span class="lead-icon" style="color: var(--red)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6l3 12 6-3 6 3 3-12-6 3-6-3z"/></svg></span> Lis Pendens</div>
+            <span class="lead-count" id="count-lis_pendens">0</span>
+          </div>
+          <div class="lead-row" data-filter="foreclosure" onclick="filterLeads('foreclosure')">
+            <div class="lead-name"><span class="lead-icon" style="color: var(--orange)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span> Foreclosure</div>
+            <span class="lead-count" id="count-foreclosure">0</span>
+          </div>
+          <div class="lead-row" data-filter="tax" onclick="filterLeads('tax')">
+            <div class="lead-name"><span class="lead-icon" style="color: var(--amber)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span> Tax</div>
+            <span class="lead-count" id="count-tax">0</span>
+          </div>
+          <div class="lead-row" data-filter="judgment" onclick="filterLeads('judgment')">
+            <div class="lead-name"><span class="lead-icon" style="color: var(--purple)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 5-8 5-8-5 8-5z"/><path d="M4 13l8 5 8-5"/></svg></span> Judgment</div>
+            <span class="lead-count" id="count-judgment">0</span>
+          </div>
+          <div class="lead-row" data-filter="lien" onclick="filterLeads('lien')">
+            <div class="lead-name"><span class="lead-icon" style="color: var(--blue)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span> Lien</div>
+            <span class="lead-count" id="count-lien">0</span>
+          </div>
+          <div class="lead-row" data-filter="probate" onclick="filterLeads('probate')">
+            <div class="lead-name"><span class="lead-icon" style="color: var(--green)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> Probate</div>
+            <span class="lead-count" id="count-probate">0</span>
+          </div>
+          <div class="lead-row" data-filter="vacant" onclick="filterLeads('vacant')">
+            <div class="lead-name"><span class="lead-icon" style="color: var(--text-3)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><line x1="9" y1="15" x2="15" y2="9"/><line x1="9" y1="9" x2="15" y2="15"/></svg></span> Vacant</div>
+            <span class="lead-count" id="count-vacant">0</span>
+          </div>
+          <div class="lead-row" data-filter="code_violation" onclick="filterLeads('code_violation')">
+            <div class="lead-name"><span class="lead-icon" style="color: #b45309"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span> Code violation</div>
+            <span class="lead-count" id="count-code_violation">0</span>
+          </div>
+        </div>
+
+        <div class="side-panel">
+          <h3>Score Filters</h3>
+          <div class="lead-row active" data-score="all" onclick="filterScore('all')">
+            <div class="lead-name"><span class="lead-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 8 22 9 17 14 18 21 12 17 6 21 7 14 2 9 9 8"/></svg></span> All Scores</div>
+            <span class="lead-count" id="score-count-all">0</span>
+          </div>
+          <div class="lead-row" data-score="hot" onclick="filterScore('hot')">
+            <div class="lead-name"><span class="lead-icon" style="color: var(--red)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span> Hot (≥70)</div>
+            <span class="lead-count" id="score-count-hot">0</span>
+          </div>
+          <div class="lead-row" data-score="warm" onclick="filterScore('warm')">
+            <div class="lead-name"><span class="lead-icon" style="color: var(--orange)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg></span> Warm (≥50)</div>
+            <span class="lead-count" id="score-count-warm">0</span>
+          </div>
+          <div class="lead-row" data-score="active" onclick="filterScore('active')">
+            <div class="lead-name"><span class="lead-icon" style="color: var(--green)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span> Active (≥30)</div>
+            <span class="lead-count" id="score-count-active">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- MAIN -->
+      <div class="main">
+
+        <!-- STAT CARDS -->
+        <div class="stat-row">
+          <div class="stat-card">
+            <div class="stat-icon blue"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
+            <div>
+              <div class="stat-num" id="stat-total">0</div>
+              <div class="stat-label">Total Records</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon red"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></div>
+            <div>
+              <div class="stat-num red" id="stat-hot">0</div>
+              <div class="stat-label">Hot Leads (≥70)</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon orange"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg></div>
+            <div>
+              <div class="stat-num orange" id="stat-warm">0</div>
+              <div class="stat-label">Warm Leads (50-69)</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+            <div>
+              <div class="stat-num green" id="stat-addr">0</div>
+              <div class="stat-label">With Address</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon purple"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+            <div>
+              <div class="stat-num purple" style="font-size:14px; line-height:1.2;" id="stat-range">2026/04/01–2026/05/03</div>
+              <div class="stat-label">Date Range</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TYPE LEGEND -->
+        <div class="type-legend">
+          <div class="item"><span class="dot" style="background: var(--red)"></span> Lis Pendens <span class="num" id="leg-lis">0</span></div>
+          <div class="item"><span class="dot" style="background: var(--orange)"></span> Foreclosure <span class="num" id="leg-fc">0</span></div>
+          <div class="item"><span class="dot" style="background: var(--amber)"></span> Tax <span class="num" id="leg-tax">0</span></div>
+          <div class="item"><span class="dot" style="background: var(--purple)"></span> Judgment <span class="num" id="leg-judg">0</span></div>
+          <div class="item"><span class="dot" style="background: var(--blue)"></span> Lien <span class="num" id="leg-lien">0</span></div>
+          <div class="item"><span class="dot" style="background: var(--green)"></span> Probate <span class="num" id="leg-prob">0</span></div>
+        </div>
+
+        <!-- SOURCE TIER STRIP -->
+        <div class="tier-strip">
+          <div class="item"><span class="swatch" style="background: var(--green)"></span> <strong>14</strong> sources fully automated</div>
+          <div class="item"><span class="swatch" style="background: var(--amber)"></span> <strong>4</strong> scraped (auto-retry, login req.)</div>
+          <div class="item"><span class="swatch" style="background: var(--red)"></span> <strong>2</strong> manual sources <a style="color: var(--blue); margin-left: 4px;" href="#" onclick="switchTab('manual'); return false;">view →</a></div>
+          <div class="item" style="margin-left: auto;"><span class="dot-live"></span> Last scrape: <strong>2 min ago</strong></div>
+        </div>
+
+        <!-- FILTER BAR -->
+        <div class="filter-bar">
+          <div class="search-wrap">
+            <span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+            <input type="text" id="search-input" placeholder="Search owner, address, doc number, legal..." oninput="renderTable()">
+          </div>
+          <select class="select-pill" id="sort-select" onchange="renderTable()">
+            <option value="score-desc">Score: High → Low</option>
+            <option value="score-asc">Score: Low → High</option>
+            <option value="date-desc">Date: Newest</option>
+            <option value="amount-desc">Amount: High → Low</option>
+          </select>
+          <div class="chip-row">
+            <button class="chip active" data-type="all" onclick="filterLeads('all')">All Scores</button>
+            <button class="chip" data-type="lis_pendens" onclick="filterLeads('lis_pendens')">Lis Pendens</button>
+            <button class="chip" data-type="foreclosure" onclick="filterLeads('foreclosure')">Foreclosure</button>
+            <button class="chip" data-type="tax" onclick="filterLeads('tax')">Tax</button>
+            <button class="chip" data-type="judgment" onclick="filterLeads('judgment')">Judgment</button>
+            <button class="chip" data-type="lien" onclick="filterLeads('lien')">Lien</button>
+            <button class="chip" data-type="probate" onclick="filterLeads('probate')">Probate</button>
+            <button class="chip icon-chip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46"/></svg> Filters</button>
+          </div>
+        </div>
+
+        <!-- RESULTS COUNT -->
+        <div class="results-row">
+          <div>Showing <strong id="shown-count">0</strong> of <strong id="total-count">0</strong> records</div>
+        </div>
+
+        <!-- TABLE -->
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Score</th>
+                <th>Type</th>
+                <th>Doc</th>
+                <th>Filed</th>
+                <th>Owner / Grantor</th>
+                <th>Property Address</th>
+                <th>Mailing Address</th>
+                <th>Amount</th>
+                <th>Flags</th>
+                <th>Legal Desc</th>
+                <th>Doc Link</th>
+              </tr>
+            </thead>
+            <tbody id="lead-tbody"></tbody>
+          </table>
+          <div class="tfoot">
+            <div class="rows-per-page">
+              Rows per page:
+              <select id="page-size" onchange="renderTable()">
+                <option>25</option><option>50</option><option>100</option>
+              </select>
+            </div>
+            <div class="pagination" id="pagination"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MANUAL SOURCES VIEW ===== -->
+  <div class="view" id="view-manual">
+    <div class="section-divider">
+      <h2>Manual source cards</h2>
+      <p>These sources can't be automated — follow the steps below. The dashboard will hold a slot for the leads until you enter them.</p>
+    </div>
+    <div class="manual-grid" id="manual-grid"></div>
+
+    <div class="section-divider">
+      <h2>Yellow tier — scraped with retry logic</h2>
+      <p>These sources auto-scrape but require a one-time login per session. Click "Login Now" and the bot resumes scraping behind the scenes.</p>
+    </div>
+    <div class="manual-grid" id="yellow-grid"></div>
+  </div>
+
+  <!-- ===== COMP TOOL VIEW ===== -->
+  <div class="view" id="view-comps">
+    <div class="section-divider">
+      <h2>Comp Tool</h2>
+      <p>Pulls property sales from St. Louis Property Sales Dataset (id=31) within 0.5 mile, last 12 months. Adjust radius below.</p>
+    </div>
+    <div style="padding: 0 24px 24px;">
+      <div class="filter-bar">
+        <div class="search-wrap">
+          <span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+          <input type="text" id="comp-address" placeholder="Enter subject property address... e.g. 4423 N Newstead Ave" value="4423 N Newstead Ave">
+        </div>
+        <select class="select-pill" id="comp-radius">
+          <option value="0.25">0.25 mi</option>
+          <option value="0.5" selected>0.5 mi</option>
+          <option value="1">1 mi</option>
+        </select>
+        <select class="select-pill" id="comp-months">
+          <option value="6">Last 6 mo</option>
+          <option value="12" selected>Last 12 mo</option>
+          <option value="24">Last 24 mo</option>
+        </select>
+        <button class="btn-primary" onclick="runComps()">Pull comps</button>
+      </div>
+      <div id="comp-results"></div>
+    </div>
+  </div>
+
+  <!-- ===== SOURCE STATUS VIEW ===== -->
+  <div class="view" id="view-sources">
+    <div class="section-divider">
+      <h2>Source Status</h2>
+      <p>Live status of all 20 St. Louis City data sources. Green = automated, Yellow = scraped, Red = manual.</p>
+    </div>
+    <div style="padding: 0 24px 24px;">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Tier</th>
+              <th>Source</th>
+              <th>Type</th>
+              <th>Last Run</th>
+              <th>Records</th>
+              <th>Status</th>
+              <th>Link</th>
+            </tr>
+          </thead>
+          <tbody id="source-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- CALCULATOR MODAL -->
+<div class="modal-overlay" id="calc-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Deal Calculator — MAO (Maximum Allowable Offer)</h3>
+      <div class="modal-close" onclick="closeModal('calc-modal')">×</div>
+    </div>
+    <div class="modal-body">
+      <div class="calc-grid">
+        <div class="calc-field"><label>Property address</label><input type="text" id="c-addr" placeholder="4423 N Newstead Ave"></div>
+        <div class="calc-field"><label>Strategy</label><select id="c-strategy" onchange="calcOffer()">
+          <option value="0.70">Wholesale / Fix &amp; Flip (70%)</option>
+          <option value="0.75">BRRRR (75%)</option>
+          <option value="0.80">Light rehab flip (80%)</option>
+          <option value="custom">Custom %</option>
+        </select></div>
+        <div class="calc-field"><label>ARV (after-repair value)</label><input type="number" id="c-arv" value="180000" oninput="calcOffer()"></div>
+        <div class="calc-field"><label>Repair estimate</label><input type="number" id="c-repair" value="35000" oninput="calcOffer()"></div>
+        <div class="calc-field"><label>Holding costs</label><input type="number" id="c-hold" value="6000" oninput="calcOffer()"></div>
+        <div class="calc-field"><label>Closing costs</label><input type="number" id="c-close" value="4500" oninput="calcOffer()"></div>
+        <div class="calc-field"><label>Wholesale fee</label><input type="number" id="c-fee" value="10000" oninput="calcOffer()"></div>
+        <div class="calc-field"><label>Custom % (if selected)</label><input type="number" id="c-pct" value="70" oninput="calcOffer()" step="1"></div>
+      </div>
+
+      <div class="calc-result">
+        <div class="label">Maximum Allowable Offer (MAO)</div>
+        <div class="value" id="mao-value">$67,500</div>
+        <div class="breakdown" id="mao-breakdown"></div>
+      </div>
+
+      <div style="display: flex; gap: 8px; margin-top: 16px;">
+        <button class="btn-primary" onclick="saveOffer()">Save offer to lead</button>
+        <button class="btn-ghost" onclick="closeModal('calc-modal')">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================================
+// MOCK DATA — represents what the scrapers would produce in production
+// ============================================================================
+const STL_LEADS = [
+  // Lis Pendens
+  { score: 100, type: 'lis_pendens', doc_kind: 'L/P', filed: '2026-04-29', owner: 'WALKER MICHAEL D', via: 'WELLS FARGO BANK NA', prop_addr: '4423 N NEWSTEAD AVE', prop_city: 'ST LOUIS, MO 63115', mail_addr: '4423 N NEWSTEAD AVE', mail_city: 'ST LOUIS, MO 63115', amount: 87420, flags: ['Owner-occupied','New this week','Tax delinquent','STACKED'], score_meta: 'high', doc_num: '2026R-024891', doc_src: 'Fidlar' },
+  { score: 100, type: 'lis_pendens', doc_kind: 'L/P', filed: '2026-04-28', owner: 'BRADLEY JAMES E', via: 'PENNYMAC LOAN SERVICES', prop_addr: '5847 KENNERLY AVE', prop_city: 'ST LOUIS, MO 63112', mail_addr: '5847 KENNERLY AVE', mail_city: 'ST LOUIS, MO 63112', amount: 142800, flags: ['Owner-occupied','New this week','STACKED'], score_meta: 'high', doc_num: '2026R-024763', doc_src: 'Fidlar' },
+  { score: 95, type: 'lis_pendens', doc_kind: 'L/P', filed: '2026-04-25', owner: 'CARTER YVETTE M', via: 'US BANK TRUST NA', prop_addr: '3919 NORTH MARKET ST', prop_city: 'ST LOUIS, MO 63113', mail_addr: 'PO BOX 4421', mail_city: 'ST LOUIS, MO 63115', amount: 64750, flags: ['Absentee owner','Vacant','Code violation'], score_meta: 'high', doc_num: '2026R-024510', doc_src: 'Fidlar' },
+  { score: 78, type: 'lis_pendens', doc_kind: 'L/P', filed: '2026-04-22', owner: 'HENDERSON ROBERT', via: 'NEWREZ LLC', prop_addr: '6112 W FLORISSANT AVE', prop_city: 'ST LOUIS, MO 63136', mail_addr: '6112 W FLORISSANT AVE', mail_city: 'ST LOUIS, MO 63136', amount: 98300, flags: ['Owner-occupied','New this week'], score_meta: 'high', doc_num: '2026R-024301', doc_src: 'Fidlar' },
+
+  // Foreclosure (trustee sale - non-judicial)
+  { score: 92, type: 'foreclosure', doc_kind: 'TR/SALE', filed: '2026-04-30', owner: 'PHILLIPS DARRELL', via: 'MILLSAP &amp; SINGER LLC (TRUSTEE)', prop_addr: '2841 ALLEN AVE', prop_city: 'ST LOUIS, MO 63104', mail_addr: '2841 ALLEN AVE', mail_city: 'ST LOUIS, MO 63104', amount: 78900, flags: ['Sale 2026-05-21','Owner-occupied','New this week'], score_meta: 'high', doc_num: 'DR-26-04-30-A', doc_src: 'Daily Record' },
+  { score: 88, type: 'foreclosure', doc_kind: 'TR/SALE', filed: '2026-04-26', owner: 'WASHINGTON DENISE', via: 'KOZENY &amp; MCCUBBIN LC (TRUSTEE)', prop_addr: '4719 PAGE BLVD', prop_city: 'ST LOUIS, MO 63113', mail_addr: '4719 PAGE BLVD', mail_city: 'ST LOUIS, MO 63113', amount: 61200, flags: ['Sale 2026-05-17','LLC owner'], score_meta: 'high', doc_num: 'DR-26-04-26-C', doc_src: 'Daily Record' },
+  { score: 71, type: 'foreclosure', doc_kind: 'TR/SALE', filed: '2026-04-19', owner: 'RIVERA ANGEL F', via: 'SOUTH &amp; ASSOCIATES PC', prop_addr: '4202 RUSSELL BLVD', prop_city: 'ST LOUIS, MO 63110', mail_addr: '4202 RUSSELL BLVD', mail_city: 'ST LOUIS, MO 63110', amount: 124000, flags: ['Sale 2026-05-10'], score_meta: 'high', doc_num: 'DR-26-04-19-B', doc_src: 'Daily Record' },
+
+  // Tax delinquent (derived from Property Taxes id=3)
+  { score: 84, type: 'tax', doc_kind: 'TAX', filed: '2026-04-15', owner: 'JOHNSON ESTATE OF', via: 'COLLECTOR OF REVENUE', prop_addr: '5234 MAFFITT AVE', prop_city: 'ST LOUIS, MO 63113', mail_addr: 'PO BOX 9921', mail_city: 'ST LOUIS, MO 63163', amount: 8740, flags: ['3+ yrs delinquent','Probate-likely','Vacant','STACKED'], score_meta: 'high', doc_num: 'CB3492-P011', doc_src: 'Property Taxes' },
+  { score: 76, type: 'tax', doc_kind: 'TAX', filed: '2026-04-15', owner: 'GREEN PROPERTIES LLC', via: 'COLLECTOR OF REVENUE', prop_addr: '3411 GRAVOIS AVE', prop_city: 'ST LOUIS, MO 63116', mail_addr: '15 N CENTRAL AVE STE 800', mail_city: 'CLAYTON, MO 63105', amount: 14200, flags: ['LLC owner','Absentee','2+ yrs delinquent'], score_meta: 'high', doc_num: 'CB1840-P027', doc_src: 'Property Taxes' },
+  { score: 68, type: 'tax', doc_kind: 'TAX', filed: '2026-04-15', owner: 'MCKINNEY ROOSEVELT', via: 'COLLECTOR OF REVENUE', prop_addr: '4801 SEMPLE AVE', prop_city: 'ST LOUIS, MO 63115', mail_addr: '4801 SEMPLE AVE', mail_city: 'ST LOUIS, MO 63115', amount: 6320, flags: ['Owner-occupied','2 yrs delinquent'], score_meta: 'med', doc_num: 'CB4120-P003', doc_src: 'Property Taxes' },
+  { score: 55, type: 'tax', doc_kind: 'TAX', filed: '2026-04-15', owner: 'TANNER MARGARET R', via: 'COLLECTOR OF REVENUE', prop_addr: '7128 GRAVOIS AVE', prop_city: 'ST LOUIS, MO 63116', mail_addr: '7128 GRAVOIS AVE', mail_city: 'ST LOUIS, MO 63116', amount: 4180, flags: ['1 yr delinquent'], score_meta: 'med', doc_num: 'CB5210-P018', doc_src: 'Property Taxes' },
+
+  // Judgment
+  { score: 72, type: 'judgment', doc_kind: 'JUDG', filed: '2026-04-21', owner: 'COLEMAN ANTHONY R', via: 'CAPITAL ONE BANK USA NA', prop_addr: '5519 ENRIGHT AVE', prop_city: 'ST LOUIS, MO 63112', mail_addr: '5519 ENRIGHT AVE', mail_city: 'ST LOUIS, MO 63112', amount: 22150, flags: ['Owner-occupied','Code violation'], score_meta: 'high', doc_num: '2226-CC09812', doc_src: 'Case.net' },
+  { score: 64, type: 'judgment', doc_kind: 'JUDG', filed: '2026-04-17', owner: 'PARKER LATOYA', via: 'DISCOVER BANK', prop_addr: '6045 MARQUETTE AVE', prop_city: 'ST LOUIS, MO 63139', mail_addr: '6045 MARQUETTE AVE', mail_city: 'ST LOUIS, MO 63139', amount: 14800, flags: ['Owner-occupied'], score_meta: 'med', doc_num: '2226-CC09655', doc_src: 'Case.net' },
+
+  // Lien
+  { score: 81, type: 'lien', doc_kind: 'LIEN', filed: '2026-04-23', owner: 'BLACKWELL CORP HOLDINGS', via: 'CITY OF ST LOUIS', prop_addr: '3712 N 14TH ST', prop_city: 'ST LOUIS, MO 63107', mail_addr: '7733 FORSYTH BLVD', mail_city: 'CLAYTON, MO 63105', amount: 31900, flags: ['Demolition lien','LLC owner','Vacant','STACKED'], score_meta: 'high', doc_num: '2026R-024112', doc_src: 'Fidlar' },
+  { score: 67, type: 'lien', doc_kind: 'LIEN', filed: '2026-04-18', owner: 'GRAY HENRY L', via: 'CITY OF ST LOUIS - WATER DIV', prop_addr: '4938 LABADIE AVE', prop_city: 'ST LOUIS, MO 63115', mail_addr: '4938 LABADIE AVE', mail_city: 'ST LOUIS, MO 63115', amount: 4720, flags: ['Owner-occupied','Water lien'], score_meta: 'med', doc_num: '2026R-023891', doc_src: 'Fidlar' },
+  { score: 59, type: 'lien', doc_kind: 'LIEN', filed: '2026-04-12', owner: 'STEVENS PROPERTIES LLC', via: 'IRS', prop_addr: '2415 GRAVOIS AVE', prop_city: 'ST LOUIS, MO 63104', mail_addr: '7100 OAKLAND AVE', mail_city: 'ST LOUIS, MO 63117', amount: 18400, flags: ['Federal tax lien','LLC owner','Absentee'], score_meta: 'med', doc_num: '2026R-023401', doc_src: 'Fidlar' },
+
+  // Probate (sparse — manual entry only)
+  { score: 89, type: 'probate', doc_kind: 'PROB', filed: '2026-04-08', owner: 'ESTATE OF MARTHA G WHITLEY', via: 'PROBATE DIV — case 26P-PR00321', prop_addr: '4116 N FLORISSANT AVE', prop_city: 'ST LOUIS, MO 63107', mail_addr: '—', mail_city: '—', amount: 0, flags: ['Manual entry','Decedent','Vacant'], score_meta: 'high', doc_num: '26P-PR00321', doc_src: 'Probate (manual)' },
+
+  // Vacant
+  { score: 86, type: 'vacant', doc_kind: 'VAC', filed: '2026-04-30', owner: 'LRA - LAND REUTILIZATION AUTH', via: 'CITY DATASET id=108', prop_addr: '4318 PENROSE ST', prop_city: 'ST LOUIS, MO 63115', mail_addr: '1015 LOCUST ST STE 1200', mail_city: 'ST LOUIS, MO 63101', amount: 0, flags: ['LRA-owned','Vacant 2+ yrs'], score_meta: 'high', doc_num: 'VB-2024-08819', doc_src: 'Vacant Buildings' },
+  { score: 73, type: 'vacant', doc_kind: 'VAC', filed: '2026-04-28', owner: 'HARRIS WILLIAM EST', via: 'CITY DATASET id=108', prop_addr: '5021 ST LOUIS AVE', prop_city: 'ST LOUIS, MO 63115', mail_addr: '—', mail_city: '—', amount: 0, flags: ['Vacant','Decedent','Probate-likely'], score_meta: 'high', doc_num: 'VB-2024-08641', doc_src: 'Vacant Buildings' },
+  { score: 51, type: 'vacant', doc_kind: 'VAC', filed: '2026-04-21', owner: 'NIXON LLC', via: 'CITY DATASET id=108', prop_addr: '3322 CALIFORNIA AVE', prop_city: 'ST LOUIS, MO 63118', mail_addr: '4920 OLIVE BLVD', mail_city: 'ST LOUIS, MO 63108', amount: 0, flags: ['Vacant','LLC owner'], score_meta: 'med', doc_num: 'VB-2024-08512', doc_src: 'Vacant Buildings' },
+
+  // Code violations
+  { score: 79, type: 'code_violation', doc_kind: 'CV', filed: '2026-04-27', owner: 'BRYANT FAMILY TRUST', via: 'BUILDING DIV id=11', prop_addr: '5530 BARTMER AVE', prop_city: 'ST LOUIS, MO 63112', mail_addr: '5530 BARTMER AVE', mail_city: 'ST LOUIS, MO 63112', amount: 1800, flags: ['Condemnation order','Owner-occupied','STACKED'], score_meta: 'high', doc_num: 'BLD-26-04231', doc_src: 'Building Inspections' },
+  { score: 62, type: 'code_violation', doc_kind: 'CV', filed: '2026-04-19', owner: 'HOLLOWAY JEROME', via: 'BUILDING DIV id=11', prop_addr: '4144 N MARKET ST', prop_city: 'ST LOUIS, MO 63113', mail_addr: '4144 N MARKET ST', mail_city: 'ST LOUIS, MO 63113', amount: 950, flags: ['Multiple violations','Owner-occupied'], score_meta: 'med', doc_num: 'BLD-26-04102', doc_src: 'Building Inspections' },
+];
+
+// Comp data for the comp tool
+const STL_COMPS = [
+  { addr: '4419 N NEWSTEAD AVE', sale_date: '2026-02-14', price: 175000, sqft: 1340, ppsf: 130.6, beds: 3, baths: 2, dist: 0.04 },
+  { addr: '4502 N NEWSTEAD AVE', sale_date: '2025-11-22', price: 168000, sqft: 1280, ppsf: 131.3, beds: 3, baths: 1.5, dist: 0.09 },
+  { andr: '4318 SHREVE AVE', addr: '4318 SHREVE AVE', sale_date: '2026-01-08', price: 195000, sqft: 1520, ppsf: 128.3, beds: 4, baths: 2, dist: 0.18 },
+  { addr: '4625 GREER AVE', sale_date: '2025-12-03', price: 152000, sqft: 1180, ppsf: 128.8, beds: 3, baths: 1, dist: 0.21 },
+  { addr: '4810 LABADIE AVE', sale_date: '2026-03-19', price: 188500, sqft: 1410, ppsf: 133.7, beds: 3, baths: 2, dist: 0.35 },
+];
+
+// Source-status data — every row from the priority list
+const SOURCES = [
+  { tier: 'green', name: 'GIS / parcel map', type: 'GIS feed', last: '2 min ago', records: '128,442', status: 'OK', link: 'https://geoportal2.stlouis-mo.gov' },
+  { tier: 'green', name: 'Bulk parcel ownership / tax roll', type: 'CSV (id=82)', last: '1 hr ago', records: '128,442', status: 'OK', link: 'https://www.stlouis-mo.gov/data/datasets/dataset.cfm?id=82' },
+  { tier: 'green', name: 'Direct download hub', type: 'Open data', last: '10 min ago', records: '—', status: 'OK', link: 'https://dynamic.stlouis-mo.gov/opendata/downloads.cfm' },
+  { tier: 'green', name: 'Property tax records by parcel', type: 'CSV (id=3)', last: '12 hr ago', records: '128,440', status: 'OK', link: 'https://www.stlouis-mo.gov/data/datasets/dataset.cfm?id=3' },
+  { tier: 'green', name: 'Parcel join helper', type: 'CSV', last: '1 hr ago', records: '128,442', status: 'OK', link: 'https://www.stlouis-mo.gov/data/datasets/dataset.cfm?id=82' },
+  { tier: 'green', name: 'Tax delinquent / land tax sale schedule', type: 'Page scrape', last: '6 hr ago', records: '—', status: 'OK', link: 'https://www.stlouis-mo.gov/government/departments/collector/real-estate-tax/property-sales.cfm' },
+  { tier: 'green', name: 'Sheriff\'s land tax sale page', type: 'PDF + OCR', last: '6 hr ago', records: '0 (between sales)', status: 'IDLE', link: 'https://www.stlouis-mo.gov/government/departments/sheriff/land-tax/land-tax-sales.cfm' },
+  { tier: 'green', name: 'Current land tax sale properties', type: 'PDF + OCR', last: '6 hr ago', records: '0 (between sales)', status: 'IDLE', link: 'https://www.stlouis-mo.gov/government/departments/collector/real-estate-tax/documents/index.cfm' },
+  { tier: 'green', name: 'Assessor / appraisal datasets', type: 'CSV (id=48)', last: '1 hr ago', records: '128,442', status: 'OK', link: 'https://www.stlouis-mo.gov/data/departments/department.cfm?id=48' },
+  { tier: 'green', name: 'Assessor records & mapping office', type: 'Page scrape', last: '12 hr ago', records: '—', status: 'OK', link: 'https://www.stlouis-mo.gov/government/departments/assessor/records-mapping/index.cfm' },
+  { tier: 'green', name: 'Vacant building list / violations / invoices', type: 'API (id=108)', last: '2 hr ago', records: '7,891', status: 'OK', link: 'https://www.stlouis-mo.gov/data/datasets/dataset.cfm?id=108' },
+  { tier: 'green', name: 'Building inspections / existing structures', type: 'API (id=11)', last: '2 hr ago', records: '24,310', status: 'OK', link: 'https://www.stlouis-mo.gov/data/datasets/dataset.cfm?id=11' },
+  { tier: 'green', name: 'Building Division', type: 'ArcGIS', last: '2 hr ago', records: '—', status: 'OK', link: 'https://www.stlouis-mo.gov/government/departments/public-safety/building/index.cfm' },
+  { tier: 'green', name: 'Building Division court referrals', type: 'Page scrape', last: '6 hr ago', records: '142', status: 'OK', link: 'https://www.stlouis-mo.gov/government/departments/public-safety/building/courts-section.cfm' },
+  { tier: 'green', name: 'Permits / Accela portal', type: 'Public API', last: '2 hr ago', records: '—', status: 'OK', link: 'https://aca-prod.accela.com/SLC/Default.aspx' },
+  { tier: 'green', name: 'Citizens\' Service Bureau complaints', type: 'Open data', last: '1 hr ago', records: '—', status: 'OK', link: 'https://www.stlouis-mo.gov/government/departments/public-safety/neighborhood-stabilization-office/citizens-service-bureau/how-to-file-a-service-request.cfm' },
+  { tier: 'green', name: 'Property sales / comp support', type: 'CSV (id=31)', last: '12 hr ago', records: '14,720', status: 'OK', link: 'https://www.stlouis-mo.gov/data/datasets/dataset.cfm?id=31' },
+  { tier: 'green', name: 'LRA inventory', type: 'Access DB', last: '24 hr ago', records: '11,802', status: 'OK', link: 'https://dynamic.stlouis-mo.gov/opendata/downloads.cfm' },
+  { tier: 'yellow', name: 'Recorder of Deeds (Fidlar DirectSearch)', type: 'Playwright + login', last: '4 hr ago', records: '12,491', status: 'NEEDS LOGIN', link: 'https://mostlouiscity.fidlar.com/MOStLouis/DirectSearch/' },
+  { tier: 'yellow', name: 'Missouri Case.net', type: 'Playwright + login', last: '3 hr ago', records: '8,210', status: 'OK', link: 'https://www.courts.mo.gov/casenet/welcome.do' },
+  { tier: 'yellow', name: 'St. Louis 22nd Circuit Court', type: 'Playwright + login', last: '3 hr ago', records: '4,512', status: 'OK', link: 'https://www.stlcitycircuitcourt.com/' },
+  { tier: 'yellow', name: 'Daily Record (trustee sales / foreclosures)', type: 'OCR + scrape', last: '6 hr ago', records: '281', status: 'OK', link: 'https://www.molawyersmedia.com/' },
+  { tier: 'red', name: 'Probate Court — case info', type: 'Mail / fax request', last: '—', records: '12 (manual)', status: 'MANUAL', link: 'https://www.stlcitycircuitcourt.com/courts_services/probate_court/index.php' },
+  { tier: 'red', name: 'Historic probate index (1890–2000)', type: 'Mail / fax request', last: '—', records: '0', status: 'MANUAL', link: 'https://www.stlcitycircuitcourt.com/courts_services/probate_court/historical_probate_case_index.php' },
+];
+
+// Manual source cards content
+const MANUAL_CARDS = [
+  {
+    tier: 'red',
+    title: 'Probate Court — Decedent Estates',
+    sub: 'St. Louis City 22nd Circuit Court Probate Division',
+    steps: [
+      'Open the case-info request form at the link below. The court does not allow online lookups.',
+      'Fill out the form with decedent name, approximate date of death, and case number if known.',
+      'Submit by mail (10 N Tucker Blvd, St. Louis MO 63101) or fax (314-622-4537).',
+      'When the response arrives, click "Add probate lead" below to enter it into the database.',
+      'The lead will be auto-scored by the same engine that scores automated leads.'
+    ],
+    link: 'https://www.stlcitycircuitcourt.com/courts_services/probate_court/index.php',
+    actions: [
+      { label: 'Open request form', kind: 'primary', action: 'window.open(\'https://www.stlcitycircuitcourt.com/courts_services/probate_court/index.php\')' },
+      { label: 'Generate fax cover sheet', kind: 'ghost', action: 'generateFaxCover()' },
+      { label: 'Add probate lead', kind: 'ghost', action: 'addManualLead(\'probate\')' }
+    ]
+  },
+  {
+    tier: 'red',
+    title: 'Historic Probate Index (1890 – May 2000)',
+    sub: 'For older estate / property-title research',
+    steps: [
+      'Search the historical case index online to confirm the case number exists.',
+      'Once you have the case number, mail or fax the records request — same address and fax as Probate Court.',
+      'Allow 7–14 business days for response.',
+      'Use this only when researching pre-2000 ownership — modern leads should use the regular Probate Court card.'
+    ],
+    link: 'https://www.stlcitycircuitcourt.com/courts_services/probate_court/historical_probate_case_index.php',
+    actions: [
+      { label: 'Open historic index', kind: 'primary', action: 'window.open(\'https://www.stlcitycircuitcourt.com/courts_services/probate_court/historical_probate_case_index.php\')' },
+      { label: 'Add historic lead', kind: 'ghost', action: 'addManualLead(\'probate\')' }
+    ]
+  }
+];
+
+const YELLOW_CARDS = [
+  {
+    tier: 'yellow',
+    title: 'Fidlar DirectSearch — Recorder of Deeds',
+    sub: 'Login required. Bot resumes automatically after login.',
+    steps: [
+      'Click "Login Now" — this opens an embedded browser window.',
+      'Log in with your DirectSearch account ($50–$100/mo subscription).',
+      'Once logged in, close the window. Playwright detects the cookie and resumes scraping.',
+      'Scrapes liens, deeds, mortgages, releases, and lis pendens parcel-by-parcel with retry logic.',
+      'Cookie expires every 24–72 hours — you\'ll get a banner when re-login is needed.'
+    ],
+    link: 'https://mostlouiscity.fidlar.com/MOStLouis/DirectSearch/',
+    actions: [
+      { label: 'Login Now', kind: 'primary', action: 'mockLogin(\'Fidlar\')' },
+      { label: 'View status', kind: 'ghost', action: 'switchTab(\'sources\')' }
+    ]
+  },
+  {
+    tier: 'yellow',
+    title: 'Missouri Case.net',
+    sub: 'Free, but per-session login required.',
+    steps: [
+      'Click "Login Now" to open Case.net in an embedded browser.',
+      'Log in with your free Case.net account.',
+      'Close the window — bot resumes scraping civil suits, judgments, foreclosures, lis pendens.',
+      'Watches the 22nd Circuit (St. Louis City) for new filings every 3 hours.'
+    ],
+    link: 'https://www.courts.mo.gov/casenet/welcome.do',
+    actions: [
+      { label: 'Login Now', kind: 'primary', action: 'mockLogin(\'Case.net\')' }
+    ]
+  },
+  {
+    tier: 'yellow',
+    title: 'St. Louis 22nd Circuit Court Portal',
+    sub: 'Per-session login required.',
+    steps: [
+      'Click "Login Now" to open the 22nd Circuit portal.',
+      'Log in with your court account.',
+      'Bot scrapes case detail pages that Case.net doesn\'t expose (party addresses, etc.).',
+      'Re-login required at the start of each Playwright session.'
+    ],
+    link: 'https://www.stlcitycircuitcourt.com/',
+    actions: [
+      { label: 'Login Now', kind: 'primary', action: 'mockLogin(\'22nd Circuit\')' }
+    ]
+  },
+  {
+    tier: 'yellow',
+    title: 'Daily Record — Trustee Sales / Foreclosures',
+    sub: 'Subscription paper. PDF scraping with OCR retry.',
+    steps: [
+      'Subscription required ($30–$60/mo at molawyersmedia.com).',
+      'Bot pulls the daily PDF, runs OCR, and extracts trustee sale notices.',
+      'Most Missouri foreclosures are non-judicial — they appear here, NOT in Case.net.',
+      'Click "Login Now" once per session to seed the cookie.'
+    ],
+    link: 'https://www.molawyersmedia.com/',
+    actions: [
+      { label: 'Login Now', kind: 'primary', action: 'mockLogin(\'Daily Record\')' }
+    ]
+  }
+];
+
+// ============================================================================
+// STATE
+// ============================================================================
+let state = {
+  typeFilter: 'all',
+  scoreFilter: 'all',
+  search: '',
+  sort: 'score-desc',
+  page: 1,
+  pageSize: 25
+};
+
+// ============================================================================
+// RENDERING
+// ============================================================================
+function fmtMoney(n) {
+  if (!n) return '—';
+  return '$' + n.toLocaleString('en-US');
+}
+
+function getFilteredLeads() {
+  let leads = STL_LEADS.slice();
+  if (state.typeFilter !== 'all') leads = leads.filter(l => l.type === state.typeFilter);
+  if (state.scoreFilter === 'hot') leads = leads.filter(l => l.score >= 70);
+  else if (state.scoreFilter === 'warm') leads = leads.filter(l => l.score >= 50 && l.score < 70);
+  else if (state.scoreFilter === 'active') leads = leads.filter(l => l.score >= 30);
+  if (state.search) {
+    const q = state.search.toLowerCase();
+    leads = leads.filter(l => [l.owner, l.prop_addr, l.doc_num, l.via].some(f => (f||'').toLowerCase().includes(q)));
+  }
+  if (state.sort === 'score-desc') leads.sort((a,b) => b.score - a.score);
+  else if (state.sort === 'score-asc') leads.sort((a,b) => a.score - b.score);
+  else if (state.sort === 'date-desc') leads.sort((a,b) => b.filed.localeCompare(a.filed));
+  else if (state.sort === 'amount-desc') leads.sort((a,b) => b.amount - a.amount);
+  return leads;
+}
+
+function scoreClass(score) {
+  if (score >= 90) return 'score-100';
+  if (score >= 70) return 'score-80';
+  if (score >= 50) return 'score-60';
+  if (score >= 30) return 'score-40';
+  return 'score-low';
+}
+
+function typeBadge(type) {
+  const map = {
+    lis_pendens: { cls: 'lis', label: 'LIS PENDENS', icon: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M3 6l3 12 6-3 6 3 3-12-6 3-6-3z"/></svg>' },
+    foreclosure: { cls: 'fc', label: 'FORECLOSURE', icon: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>' },
+    tax: { cls: 'tax', label: 'TAX', icon: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>' },
+    judgment: { cls: 'judg', label: 'JUDGMENT', icon: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 3l8 5-8 5-8-5 8-5z"/></svg>' },
+    lien: { cls: 'lien', label: 'LIEN', icon: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/></svg>' },
+    probate: { cls: 'prob', label: 'PROBATE', icon: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="9" cy="7" r="4"/></svg>' },
+    vacant: { cls: 'tax', label: 'VACANT', icon: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M3 9l9-7 9 7v11"/></svg>' },
+    code_violation: { cls: 'fc', label: 'CODE VIOL.', icon: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>' }
+  };
+  const t = map[type] || map.lien;
+  return `<span class="type-badge ${t.cls}">${t.icon} ${t.label}</span>`;
+}
+
+function flagPills(flags) {
+  return flags.map(f => {
+    const isHot = /STACKED|delinquent|Tax|Sale|Condemnation|Vacant 2/i.test(f);
+    const isInfo = /Owner|LLC|Absentee|New this/i.test(f);
+    const isWarn = /Probate|Decedent|Code|lien/i.test(f);
+    const cls = isHot ? 'hot' : isWarn ? 'warn' : isInfo ? 'info' : '';
+    return `<span class="flag-pill ${cls}">${f}</span>`;
+  }).join('');
+}
+
+function renderTable() {
+  state.search = document.getElementById('search-input').value || '';
+  state.sort = document.getElementById('sort-select').value;
+  state.pageSize = parseInt(document.getElementById('page-size').value, 10);
+
+  const leads = getFilteredLeads();
+  const tbody = document.getElementById('lead-tbody');
+  const start = (state.page - 1) * state.pageSize;
+  const pageLeads = leads.slice(start, start + state.pageSize);
+
+  tbody.innerHTML = pageLeads.map(l => `
+    <tr>
+      <td>
+        <div class="score-badge ${scoreClass(l.score)}">${l.score}</div>
+        <div class="score-meta ${l.score_meta}">${l.score_meta.toUpperCase()}</div>
+      </td>
+      <td>${typeBadge(l.type)}</td>
+      <td><strong>${l.doc_kind}</strong></td>
+      <td>${l.filed}</td>
+      <td>
+        <div class="owner-cell">${l.owner}</div>
+        <div class="owner-via">via: ${l.via}</div>
+      </td>
+      <td>
+        <div class="addr-line1">${l.prop_addr}</div>
+        <div class="addr-line2">${l.prop_city}</div>
+      </td>
+      <td>
+        <div class="addr-line1">${l.mail_addr}</div>
+        <div class="addr-line2">${l.mail_city}</div>
+      </td>
+      <td><span class="amount">${fmtMoney(l.amount)}</span></td>
+      <td><div class="flag-list">${flagPills(l.flags)}</div></td>
+      <td style="color: var(--text-3);">—</td>
+      <td>
+        <div class="doc-num">#${l.doc_num}</div>
+        <a class="doc-link" href="#">${l.doc_src} ↗</a>
+      </td>
+    </tr>
+  `).join('') || `<tr><td colspan="11" style="text-align: center; padding: 40px; color: var(--text-3);">No leads match the current filters.</td></tr>`;
+
+  document.getElementById('shown-count').textContent = pageLeads.length;
+  document.getElementById('total-count').textContent = leads.length;
+  renderPagination(leads.length);
+}
+
+function renderPagination(total) {
+  const pages = Math.max(1, Math.ceil(total / state.pageSize));
+  const box = document.getElementById('pagination');
+  let html = `<div class="pg-btn" onclick="gotoPage(${state.page-1})">‹</div>`;
+  for (let i = 1; i <= Math.min(3, pages); i++) {
+    html += `<div class="pg-btn ${i === state.page ? 'active' : ''}" onclick="gotoPage(${i})">${i}</div>`;
+  }
+  if (pages > 3) html += `<div class="pg-btn">…</div><div class="pg-btn ${pages === state.page ? 'active' : ''}" onclick="gotoPage(${pages})">${pages}</div>`;
+  html += `<div class="pg-btn" onclick="gotoPage(${state.page+1})">›</div>`;
+  box.innerHTML = html;
+}
+
+function gotoPage(p) {
+  const total = getFilteredLeads().length;
+  const pages = Math.max(1, Math.ceil(total / state.pageSize));
+  state.page = Math.max(1, Math.min(p, pages));
+  renderTable();
+}
+
+function updateCounts() {
+  const types = ['all','lis_pendens','foreclosure','tax','judgment','lien','probate','vacant','code_violation'];
+  types.forEach(t => {
+    const count = t === 'all' ? STL_LEADS.length : STL_LEADS.filter(l => l.type === t).length;
+    const el = document.getElementById('count-' + t);
+    if (el) el.textContent = count;
+  });
+  document.getElementById('score-count-all').textContent = STL_LEADS.length;
+  document.getElementById('score-count-hot').textContent = STL_LEADS.filter(l => l.score >= 70).length;
+  document.getElementById('score-count-warm').textContent = STL_LEADS.filter(l => l.score >= 50 && l.score < 70).length;
+  document.getElementById('score-count-active').textContent = STL_LEADS.filter(l => l.score >= 30).length;
+
+  document.getElementById('stat-total').textContent = STL_LEADS.length.toLocaleString();
+  document.getElementById('stat-hot').textContent = STL_LEADS.filter(l => l.score >= 70).length;
+  document.getElementById('stat-warm').textContent = STL_LEADS.filter(l => l.score >= 50 && l.score < 70).length;
+  document.getElementById('stat-addr').textContent = STL_LEADS.filter(l => l.prop_addr && l.prop_addr !== '—').length;
+
+  document.getElementById('leg-lis').textContent = STL_LEADS.filter(l => l.type==='lis_pendens').length;
+  document.getElementById('leg-fc').textContent = STL_LEADS.filter(l => l.type==='foreclosure').length;
+  document.getElementById('leg-tax').textContent = STL_LEADS.filter(l => l.type==='tax').length;
+  document.getElementById('leg-judg').textContent = STL_LEADS.filter(l => l.type==='judgment').length;
+  document.getElementById('leg-lien').textContent = STL_LEADS.filter(l => l.type==='lien').length;
+  document.getElementById('leg-prob').textContent = STL_LEADS.filter(l => l.type==='probate').length;
+}
+
+function filterLeads(type) {
+  state.typeFilter = type;
+  state.page = 1;
+  document.querySelectorAll('.lead-row[data-filter]').forEach(r => r.classList.toggle('active', r.dataset.filter === type));
+  document.querySelectorAll('.chip[data-type]').forEach(c => c.classList.toggle('active', c.dataset.type === type));
+  renderTable();
+}
+
+function filterScore(s) {
+  state.scoreFilter = s;
+  state.page = 1;
+  document.querySelectorAll('.lead-row[data-score]').forEach(r => r.classList.toggle('active', r.dataset.score === s));
+  renderTable();
+}
+
+// ============================================================================
+// MANUAL CARDS
+// ============================================================================
+function renderManual() {
+  const grid = document.getElementById('manual-grid');
+  grid.innerHTML = MANUAL_CARDS.map((c, i) => `
+    <div class="manual-card">
+      <div class="header red">
+        <div>
+          <h4>${c.title}</h4>
+          <div class="sub">${c.sub}</div>
+        </div>
+        <span class="tier-tag red">Manual</span>
+      </div>
+      <div class="body">
+        <ol>${c.steps.map(s => `<li>${s}</li>`).join('')}</ol>
+      </div>
+      <div class="actions">
+        ${c.actions.map(a => `<button class="btn-sm ${a.kind}" onclick="${a.action}">${a.label}</button>`).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  const ygrid = document.getElementById('yellow-grid');
+  ygrid.innerHTML = YELLOW_CARDS.map(c => `
+    <div class="manual-card">
+      <div class="header yellow">
+        <div>
+          <h4>${c.title}</h4>
+          <div class="sub">${c.sub}</div>
+        </div>
+        <span class="tier-tag yellow">Yellow</span>
+      </div>
+      <div class="body">
+        <ol>${c.steps.map(s => `<li>${s}</li>`).join('')}</ol>
+      </div>
+      <div class="actions">
+        ${c.actions.map(a => `<button class="btn-sm ${a.kind}" onclick="${a.action}">${a.label}</button>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ============================================================================
+// SOURCE STATUS
+// ============================================================================
+function renderSources() {
+  const tbody = document.getElementById('source-tbody');
+  tbody.innerHTML = SOURCES.map(s => {
+    const tagCls = s.tier === 'green' ? 'green' : s.tier === 'yellow' ? 'yellow' : 'red';
+    const statusColor = s.status === 'OK' ? 'var(--green)' : s.status === 'NEEDS LOGIN' ? 'var(--amber)' : s.status === 'IDLE' ? 'var(--text-3)' : 'var(--red)';
+    return `
+      <tr>
+        <td><span class="tier-tag ${tagCls === 'green' ? '' : tagCls}" style="background: ${tagCls === 'green' ? 'var(--green)' : tagCls === 'yellow' ? 'var(--amber)' : 'var(--red)'}; color: white;">${s.tier.toUpperCase()}</span></td>
+        <td><strong>${s.name}</strong></td>
+        <td style="color: var(--text-3);">${s.type}</td>
+        <td>${s.last}</td>
+        <td><span class="amount">${s.records}</span></td>
+        <td><span style="color: ${statusColor}; font-weight: 600;">● ${s.status}</span></td>
+        <td><a href="${s.link}" target="_blank" class="doc-link">Open ↗</a></td>
+      </tr>
+    `;
+  }).join('');
+}
+
+// ============================================================================
+// CALCULATOR
+// ============================================================================
+function openCalculator() { document.getElementById('calc-modal').classList.add('show'); calcOffer(); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+function calcOffer() {
+  const arv = parseFloat(document.getElementById('c-arv').value) || 0;
+  const repair = parseFloat(document.getElementById('c-repair').value) || 0;
+  const hold = parseFloat(document.getElementById('c-hold').value) || 0;
+  const close = parseFloat(document.getElementById('c-close').value) || 0;
+  const fee = parseFloat(document.getElementById('c-fee').value) || 0;
+  const strat = document.getElementById('c-strategy').value;
+  let pct = strat === 'custom' ? (parseFloat(document.getElementById('c-pct').value) || 70) / 100 : parseFloat(strat);
+
+  const base = arv * pct;
+  const mao = base - repair - hold - close - fee;
+
+  document.getElementById('mao-value').textContent = '$' + Math.max(0, mao).toLocaleString('en-US', {maximumFractionDigits: 0});
+  document.getElementById('mao-breakdown').innerHTML = `
+    <div><span>ARV × ${(pct*100).toFixed(0)}%</span><span>$${base.toLocaleString('en-US', {maximumFractionDigits: 0})}</span></div>
+    <div><span>− Repairs</span><span>−$${repair.toLocaleString()}</span></div>
+    <div><span>− Holding</span><span>−$${hold.toLocaleString()}</span></div>
+    <div><span>− Closing</span><span>−$${close.toLocaleString()}</span></div>
+    <div><span>− Wholesale fee</span><span>−$${fee.toLocaleString()}</span></div>
+    <div style="grid-column: 1 / -1; padding-top: 8px; border-top: 1px solid var(--blue-100); font-weight: 700;"><span>= Maximum Offer</span><span>$${Math.max(0, mao).toLocaleString('en-US', {maximumFractionDigits: 0})}</span></div>
+  `;
+}
+
+function saveOffer() { showToast('Offer saved to lead'); closeModal('calc-modal'); }
+
+// ============================================================================
+// COMP TOOL
+// ============================================================================
+function runComps() {
+  const subj = document.getElementById('comp-address').value;
+  const radius = parseFloat(document.getElementById('comp-radius').value);
+  const months = parseInt(document.getElementById('comp-months').value);
+  const filtered = STL_COMPS.filter(c => c.dist <= radius);
+  const avg = filtered.reduce((s,c) => s+c.price, 0) / (filtered.length || 1);
+  const avgPpsf = filtered.reduce((s,c) => s+c.ppsf, 0) / (filtered.length || 1);
+  const median = filtered.length ? filtered.map(c=>c.price).sort((a,b)=>a-b)[Math.floor(filtered.length/2)] : 0;
+
+  document.getElementById('comp-results').innerHTML = `
+    <div class="comp-summary">
+      <div class="comp-stat"><div class="v">$${Math.round(avg).toLocaleString()}</div><div class="l">Avg Sale Price</div></div>
+      <div class="comp-stat"><div class="v">$${Math.round(median).toLocaleString()}</div><div class="l">Median Sale Price</div></div>
+      <div class="comp-stat"><div class="v">$${avgPpsf.toFixed(0)}/sf</div><div class="l">Avg $/sqft</div></div>
+    </div>
+    <div class="table-wrap">
+      <table class="comp-table">
+        <thead><tr><th>Address</th><th>Sale Date</th><th>Price</th><th>SF</th><th>$/SF</th><th>Bd/Ba</th><th>Distance</th></tr></thead>
+        <tbody>
+          ${filtered.map(c => `
+            <tr>
+              <td><strong>${c.addr}</strong></td>
+              <td>${c.sale_date}</td>
+              <td><span class="amount">$${c.price.toLocaleString()}</span></td>
+              <td>${c.sqft.toLocaleString()}</td>
+              <td>$${c.ppsf.toFixed(1)}</td>
+              <td>${c.beds}/${c.baths}</td>
+              <td>${c.dist} mi</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top: 14px; display: flex; gap: 8px;">
+      <button class="btn-primary" onclick="useArvInCalc(${Math.round(avg)})">Use avg as ARV in calculator →</button>
+      <button class="btn-ghost" onclick="exportComps()">Export comps CSV</button>
+    </div>
+  `;
+}
+
+function useArvInCalc(arv) {
+  document.getElementById('c-arv').value = arv;
+  switchTab('leads');
+  openCalculator();
+}
+
+function exportComps() { showToast('Comps CSV exported'); }
+
+// ============================================================================
+// EXPORTS
+// ============================================================================
+function exportSkipTrace() {
+  const leads = getFilteredLeads();
+  const rows = [['owner','prop_addr','prop_city','mail_addr','mail_city','score','type']];
+  leads.forEach(l => rows.push([l.owner, l.prop_addr, l.prop_city, l.mail_addr, l.mail_city, l.score, l.type]));
+  downloadCsv('stl_skip_trace.csv', rows);
+  showToast(`Skip trace exported (${leads.length} records)`);
+}
+
+function exportGHL() {
+  const leads = getFilteredLeads();
+  const rows = [['firstName','lastName','phone','email','address1','city','state','postalCode','tags','customField.score','customField.lead_type','customField.amount','customField.doc_num']];
+  leads.forEach(l => {
+    const parts = l.owner.split(' ');
+    const last = parts[0] || '';
+    const first = parts.slice(1).join(' ') || '';
+    const cityParts = (l.prop_city || '').split(', ');
+    rows.push([first, last, '', '', l.prop_addr, cityParts[0]||'', 'MO', (cityParts[1]||'').replace('MO ',''), `STL,${l.type},${l.flags.join('|')}`, l.score, l.type, l.amount, l.doc_num]);
+  });
+  downloadCsv('stl_ghl_jarvis.csv', rows);
+  showToast(`GHL CSV exported (${leads.length} records)`);
+}
+
+function downloadCsv(name, rows) {
+  const csv = rows.map(r => r.map(c => `"${String(c||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+}
+
+// ============================================================================
+// MISC
+// ============================================================================
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + name));
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function mockLogin(name) { showToast(`Opening ${name} login… bot will resume scraping after auth.`); }
+function generateFaxCover() { showToast('Fax cover sheet generated — check your downloads.'); }
+function addManualLead(type) { showToast(`Manual ${type} entry form opened.`); }
+
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
+
+// Theme toggle
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  // Remember the choice for next time (works on real websites, blocked in chat preview)
+  try { localStorage.setItem('stl-theme', next); } catch (e) {}
+}
+
+// On first load: use saved choice if we have one, otherwise fall back to OS preference
+let savedTheme = null;
+try { savedTheme = localStorage.getItem('stl-theme'); } catch (e) {}
+if (savedTheme) {
+  document.documentElement.setAttribute('data-theme', savedTheme);
+} else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  document.documentElement.setAttribute('data-theme', 'dark');
+} else {
+  document.documentElement.setAttribute('data-theme', 'light');
+}
+
+// Init
+updateCounts();
+renderTable();
+renderManual();
+renderSources();
+runComps();
+</script>
+</body>
+</html>
