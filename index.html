@@ -101,12 +101,25 @@ html[data-theme="dark"] .theme-toggle .icon-moon { display: inline-block; }
 .stat-pill .num { font-weight: 700; color: var(--blue); }
 
 /* Layout */
-.layout { display: grid; grid-template-columns: 240px 1fr; gap: 16px; padding: 0 24px 24px; }
+.layout { display: grid; grid-template-columns: 240px 1fr; gap: 16px; padding: 0 24px 24px; transition: grid-template-columns 0.25s ease; }
+.layout.sidebar-collapsed { grid-template-columns: 56px 1fr; }
 
 /* Sidebar */
-.sidebar { display: flex; flex-direction: column; gap: 16px; }
-.side-panel { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
-.side-panel h3 { font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.8px; padding: 4px 8px 12px; }
+.sidebar { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.sidebar-toggle { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--text-2); cursor: pointer; align-self: flex-end; transition: all 0.15s; }
+.sidebar-toggle:hover { background: var(--gray-cell); color: var(--text); }
+.sidebar-toggle svg { transition: transform 0.25s ease; }
+.layout.sidebar-collapsed .sidebar-toggle { align-self: center; padding: 7px; }
+.layout.sidebar-collapsed .sidebar-toggle svg { transform: rotate(180deg); }
+.layout.sidebar-collapsed .sidebar-toggle .label { display: none; }
+.side-panel { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 14px; overflow: hidden; }
+.side-panel h3 { font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.8px; padding: 4px 8px 12px; transition: opacity 0.15s; }
+.layout.sidebar-collapsed .side-panel { padding: 10px 6px; }
+.layout.sidebar-collapsed .side-panel h3 { opacity: 0; height: 0; padding: 0; pointer-events: none; }
+.layout.sidebar-collapsed .lead-row { justify-content: center; padding: 9px 0; }
+.layout.sidebar-collapsed .lead-row .lead-name { gap: 0; }
+.layout.sidebar-collapsed .lead-row .lead-name > *:not(.lead-icon) { display: none; }
+.layout.sidebar-collapsed .lead-row .lead-count { display: none; }
 .lead-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 10px; border-radius: 8px; cursor: pointer; transition: background 0.12s; margin-bottom: 2px; }
 .lead-row:hover { background: var(--gray-cell); }
 .lead-row.active { background: var(--blue-50); color: var(--blue); }
@@ -361,45 +374,49 @@ tbody tr:hover { background: var(--hover-row); }
       </div>
     </div>
 
-    <div class="layout">
+    <div class="layout" id="main-layout">
 
       <!-- SIDEBAR -->
       <div class="sidebar">
+        <button class="sidebar-toggle" onclick="toggleSidebar()" title="Collapse sidebar" aria-label="Collapse sidebar">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          <span class="label">Collapse</span>
+        </button>
         <div class="side-panel">
           <h3>Lead Types</h3>
-          <div class="lead-row active" data-filter="all" onclick="filterLeads('all')">
+          <div class="lead-row active" data-filter="all" title="All" onclick="filterLeads('all')">
             <div class="lead-name"><span class="lead-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg></span> All</div>
             <span class="lead-count" id="count-all">0</span>
           </div>
-          <div class="lead-row" data-filter="lis_pendens" onclick="filterLeads('lis_pendens')">
+          <div class="lead-row" data-filter="lis_pendens" title="Lis Pendens" onclick="filterLeads('lis_pendens')">
             <div class="lead-name"><span class="lead-icon" style="color: var(--red)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6l3 12 6-3 6 3 3-12-6 3-6-3z"/></svg></span> Lis Pendens</div>
             <span class="lead-count" id="count-lis_pendens">0</span>
           </div>
-          <div class="lead-row" data-filter="foreclosure" onclick="filterLeads('foreclosure')">
+          <div class="lead-row" data-filter="foreclosure" title="Foreclosure" onclick="filterLeads('foreclosure')">
             <div class="lead-name"><span class="lead-icon" style="color: var(--orange)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span> Foreclosure</div>
             <span class="lead-count" id="count-foreclosure">0</span>
           </div>
-          <div class="lead-row" data-filter="tax" onclick="filterLeads('tax')">
+          <div class="lead-row" data-filter="tax" title="Tax" onclick="filterLeads('tax')">
             <div class="lead-name"><span class="lead-icon" style="color: var(--amber)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span> Tax</div>
             <span class="lead-count" id="count-tax">0</span>
           </div>
-          <div class="lead-row" data-filter="judgment" onclick="filterLeads('judgment')">
+          <div class="lead-row" data-filter="judgment" title="Judgment" onclick="filterLeads('judgment')">
             <div class="lead-name"><span class="lead-icon" style="color: var(--purple)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 5-8 5-8-5 8-5z"/><path d="M4 13l8 5 8-5"/></svg></span> Judgment</div>
             <span class="lead-count" id="count-judgment">0</span>
           </div>
-          <div class="lead-row" data-filter="lien" onclick="filterLeads('lien')">
+          <div class="lead-row" data-filter="lien" title="Lien" onclick="filterLeads('lien')">
             <div class="lead-name"><span class="lead-icon" style="color: var(--blue)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span> Lien</div>
             <span class="lead-count" id="count-lien">0</span>
           </div>
-          <div class="lead-row" data-filter="probate" onclick="filterLeads('probate')">
+          <div class="lead-row" data-filter="probate" title="Probate" onclick="filterLeads('probate')">
             <div class="lead-name"><span class="lead-icon" style="color: var(--green)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> Probate</div>
             <span class="lead-count" id="count-probate">0</span>
           </div>
-          <div class="lead-row" data-filter="vacant" onclick="filterLeads('vacant')">
+          <div class="lead-row" data-filter="vacant" title="Vacant" onclick="filterLeads('vacant')">
             <div class="lead-name"><span class="lead-icon" style="color: var(--text-3)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><line x1="9" y1="15" x2="15" y2="9"/><line x1="9" y1="9" x2="15" y2="15"/></svg></span> Vacant</div>
             <span class="lead-count" id="count-vacant">0</span>
           </div>
-          <div class="lead-row" data-filter="code_violation" onclick="filterLeads('code_violation')">
+          <div class="lead-row" data-filter="code_violation" title="Code violation" onclick="filterLeads('code_violation')">
             <div class="lead-name"><span class="lead-icon" style="color: #b45309"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span> Code violation</div>
             <span class="lead-count" id="count-code_violation">0</span>
           </div>
@@ -407,19 +424,19 @@ tbody tr:hover { background: var(--hover-row); }
 
         <div class="side-panel">
           <h3>Score Filters</h3>
-          <div class="lead-row active" data-score="all" onclick="filterScore('all')">
+          <div class="lead-row active" data-score="all" title="All Scores" onclick="filterScore('all')">
             <div class="lead-name"><span class="lead-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 8 22 9 17 14 18 21 12 17 6 21 7 14 2 9 9 8"/></svg></span> All Scores</div>
             <span class="lead-count" id="score-count-all">0</span>
           </div>
-          <div class="lead-row" data-score="hot" onclick="filterScore('hot')">
+          <div class="lead-row" data-score="hot" title="Hot (&ge;70)" onclick="filterScore('hot')">
             <div class="lead-name"><span class="lead-icon" style="color: var(--red)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span> Hot (≥70)</div>
             <span class="lead-count" id="score-count-hot">0</span>
           </div>
-          <div class="lead-row" data-score="warm" onclick="filterScore('warm')">
+          <div class="lead-row" data-score="warm" title="Warm (&ge;50)" onclick="filterScore('warm')">
             <div class="lead-name"><span class="lead-icon" style="color: var(--orange)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg></span> Warm (≥50)</div>
             <span class="lead-count" id="score-count-warm">0</span>
           </div>
-          <div class="lead-row" data-score="active" onclick="filterScore('active')">
+          <div class="lead-row" data-score="active" title="Active (&ge;30)" onclick="filterScore('active')">
             <div class="lead-name"><span class="lead-icon" style="color: var(--green)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span> Active (≥30)</div>
             <span class="lead-count" id="score-count-active">0</span>
           </div>
@@ -581,11 +598,17 @@ tbody tr:hover { background: var(--hover-row); }
           <option value="0.25">0.25 mi</option>
           <option value="0.5" selected>0.5 mi</option>
           <option value="1">1 mi</option>
+          <option value="2">2 mi</option>
+          <option value="3">3 mi</option>
+          <option value="5">5 mi</option>
+          <option value="10">10 mi</option>
         </select>
         <select class="select-pill" id="comp-months">
+          <option value="3">Last 3 mo</option>
           <option value="6">Last 6 mo</option>
           <option value="12" selected>Last 12 mo</option>
           <option value="24">Last 24 mo</option>
+          <option value="36">Last 36 mo</option>
         </select>
         <button class="btn-primary" onclick="runComps()">Pull comps</button>
       </div>
@@ -1219,6 +1242,20 @@ function showToast(msg) {
 function mockLogin(name) { showToast(`Opening ${name} login… bot will resume scraping after auth.`); }
 function generateFaxCover() { showToast('Fax cover sheet generated — check your downloads.'); }
 function addManualLead(type) { showToast(`Manual ${type} entry form opened.`); }
+
+// Sidebar collapse toggle
+function toggleSidebar() {
+  const layout = document.getElementById('main-layout');
+  const isCollapsed = layout.classList.toggle('sidebar-collapsed');
+  try { localStorage.setItem('stl-sidebar', isCollapsed ? 'collapsed' : 'open'); } catch (e) {}
+}
+
+// Restore sidebar state on first load
+try {
+  if (localStorage.getItem('stl-sidebar') === 'collapsed') {
+    document.getElementById('main-layout').classList.add('sidebar-collapsed');
+  }
+} catch (e) {}
 
 document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
 
