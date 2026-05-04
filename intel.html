@@ -317,7 +317,6 @@ tbody tr:hover { background: var(--hover-row); }
       </div>
       <div class="brand-text">
         <h1>St. Louis City MO</h1>
-        <p>Motivated Seller Intelligence</p>
       </div>
     </div>
     <div class="topbar-right">
@@ -363,6 +362,11 @@ tbody tr:hover { background: var(--hover-row); }
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Skip Trace CSV
         </button>
+        <button class="btn-ghost" onclick="document.getElementById('skip-trace-upload').click()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Upload Skip Trace List
+        </button>
+        <input type="file" id="skip-trace-upload" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleSkipTraceUpload(event)">
         <button class="btn-ghost" onclick="exportGHL()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           GHL CSV
@@ -1242,6 +1246,58 @@ function showToast(msg) {
 function mockLogin(name) { showToast(`Opening ${name} login… bot will resume scraping after auth.`); }
 function generateFaxCover() { showToast('Fax cover sheet generated — check your downloads.'); }
 function addManualLead(type) { showToast(`Manual ${type} entry form opened.`); }
+
+// Skip Trace upload handler
+function handleSkipTraceUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const text = e.target.result;
+    const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+    if (lines.length < 2) {
+      showToast('File looks empty or only has a header — no records found.');
+      return;
+    }
+
+    const header = lines[0].toLowerCase();
+    const dataRows = lines.length - 1;
+
+    // Detect common skip-trace columns
+    const hasPhone = /phone|mobile|cell|wireless/.test(header);
+    const hasEmail = /email|e-mail/.test(header);
+    const hasAddress = /address|property|street/.test(header);
+
+    let phoneCount = 0, emailCount = 0;
+    for (let i = 1; i < lines.length; i++) {
+      const row = lines[i];
+      // crude phone match: 10-digit US number or formatted variants
+      if (/(\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4})/.test(row)) phoneCount++;
+      // email match
+      if (/[\w.+-]+@[\w-]+\.[\w.-]+/.test(row)) emailCount++;
+    }
+
+    const hits = [];
+    if (hasAddress) hits.push('addresses');
+    if (hasPhone) hits.push(`${phoneCount} phones`);
+    if (hasEmail) hits.push(`${emailCount} emails`);
+
+    const summary = hits.length
+      ? `Imported ${dataRows} records — found ${hits.join(', ')}`
+      : `Imported ${dataRows} rows — couldn't detect skip-trace columns`;
+
+    showToast(summary);
+
+    // Reset the input so the same file can be re-uploaded if needed
+    event.target.value = '';
+  };
+  reader.onerror = function() {
+    showToast('Could not read that file. Try a CSV.');
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
 
 // Sidebar collapse toggle
 function toggleSidebar() {
