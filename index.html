@@ -716,18 +716,18 @@ window.loadRealLeads = async function() {
       if (l.total_tax_owed > 0) flags.push('Tax delinquent');
       if (l.total_tax_owed > 5000) flags.push('Heavy delinquent');
       if (l.vacant_lot) flags.push('Vacant');
-      if (l.owner_state &amp;&amp; l.owner_state !== 'MO') flags.push('Out-of-state owner');
-      if (l.total_tax_owed > 0 &amp;&amp; l.vacant_lot) flags.push('STACKED');
+      if (l.owner_state &&; l.owner_state !== 'MO') flags.push('Out-of-state owner');
+      if (l.total_tax_owed > 0 && l.vacant_lot) flags.push('STACKED');
       if (flags.length === 0) flags.push('Active');
 
       const ownerCity = (l.owner_city || '').toUpperCase();
       const ownerState = l.owner_state || '';
       const ownerZip = l.owner_zip || '';
-      const propCity = `ST LOUIS, MO ${ownerZip &amp;&amp; ownerState === 'MO' ? ownerZip : ''}`.trim();
+      const propCity = `ST LOUIS, MO ${ownerZip && ownerState === 'MO' ? ownerZip : ''}`.trim();
 
       // Decide a "type" so the existing filters work
       let type = 'tax';
-      if (l.vacant_lot &amp;&amp; l.total_tax_owed > 0) type = 'tax';
+      if (l.vacant_lot && l.total_tax_owed > 0) type = 'tax';
       else if (l.vacant_lot) type = 'vacant';
       else if (l.total_tax_owed > 0) type = 'tax';
       else type = 'tax';
