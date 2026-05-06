@@ -101,8 +101,7 @@ html[data-theme="dark"] .theme-toggle .icon-moon { display: inline-block; }
 .stat-pill .num { font-weight: 700; color: var(--blue); }
 
 /* Layout */
-.layout { display: grid; grid-template-columns: 240px 1fr; gap: 16px; padding: 0 24px 24px; transition: grid-template-columns 0.25s ease; }
-.layout.sidebar-collapsed { grid-template-columns: 56px 1fr; }
+.layout { display: grid; grid-template-columns: 1fr; gap: 16px; padding: 0 24px 24px; }
 
 /* Sidebar */
 .sidebar { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
@@ -296,9 +295,29 @@ tbody tr:hover { background: var(--hover-row); }
 .tier-strip .swatch { width: 12px; height: 12px; border-radius: 3px; }
 
 @media (max-width: 1100px) {
-  .layout { grid-template-columns: 1fr; }
   .stat-row { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* Filter dropdown panel */
+.filter-dropdown-wrap { position: relative; display: inline-flex; }
+.filters-panel { display: none; position: absolute; top: calc(100% + 6px); right: 0; width: 288px; background: var(--panel); border: 1px solid var(--border-strong); border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.20); padding: 16px; z-index: 50; }
+.filters-panel.open { display: block; }
+.fp-section { margin-bottom: 14px; }
+.fp-label { display: block; font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 8px; }
+.fp-input { padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: var(--gray-cell); color: var(--text); font-family: inherit; }
+.fp-input:focus { outline: none; border-color: var(--blue); }
+.fp-range { display: flex; align-items: center; gap: 6px; }
+.fp-range-sep { font-size: 11px; color: var(--text-3); }
+.fp-radio-group, .fp-check-group { display: flex; flex-direction: column; gap: 7px; }
+.fp-radio, .fp-check { display: flex; align-items: center; gap: 7px; font-size: 13px; cursor: pointer; user-select: none; }
+.fp-toggle-wrap { display: flex; align-items: center; gap: 10px; }
+.fp-toggle { position: relative; display: inline-block; width: 36px; height: 20px; flex-shrink: 0; }
+.fp-toggle input { opacity: 0; width: 0; height: 0; }
+.fp-toggle-track { position: absolute; inset: 0; background: var(--border-strong); border-radius: 10px; transition: background 0.2s; cursor: pointer; }
+.fp-toggle-track::after { content: ''; position: absolute; width: 14px; height: 14px; border-radius: 50%; background: white; top: 3px; left: 3px; transition: left 0.18s; }
+.fp-toggle input:checked + .fp-toggle-track { background: var(--blue); }
+.fp-toggle input:checked + .fp-toggle-track::after { left: 19px; }
+.fp-footer { display: flex; justify-content: flex-end; gap: 8px; padding-top: 12px; border-top: 1px solid var(--border); margin-top: 4px; }
 </style>
 </head>
 <body>
@@ -380,72 +399,7 @@ tbody tr:hover { background: var(--hover-row); }
 
     <div class="layout" id="main-layout">
 
-      <!-- SIDEBAR -->
-      <div class="sidebar">
-        <button class="sidebar-toggle" onclick="toggleSidebar()" title="Collapse sidebar" aria-label="Collapse sidebar">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-          <span class="label">Collapse</span>
-        </button>
-        <div class="side-panel">
-          <h3>Lead Types</h3>
-          <div class="lead-row active" data-filter="all" title="All" onclick="filterLeads('all')">
-            <div class="lead-name"><span class="lead-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg></span> All</div>
-            <span class="lead-count" id="count-all">0</span>
-          </div>
-          <div class="lead-row" data-filter="lis_pendens" title="Lis Pendens" onclick="filterLeads('lis_pendens')">
-            <div class="lead-name"><span class="lead-icon" style="color: var(--red)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6l3 12 6-3 6 3 3-12-6 3-6-3z"/></svg></span> Lis Pendens</div>
-            <span class="lead-count" id="count-lis_pendens">0</span>
-          </div>
-          <div class="lead-row" data-filter="foreclosure" title="Foreclosure" onclick="filterLeads('foreclosure')">
-            <div class="lead-name"><span class="lead-icon" style="color: var(--orange)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span> Foreclosure</div>
-            <span class="lead-count" id="count-foreclosure">0</span>
-          </div>
-          <div class="lead-row" data-filter="tax" title="Tax" onclick="filterLeads('tax')">
-            <div class="lead-name"><span class="lead-icon" style="color: var(--amber)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span> Tax</div>
-            <span class="lead-count" id="count-tax">0</span>
-          </div>
-          <div class="lead-row" data-filter="judgment" title="Judgment" onclick="filterLeads('judgment')">
-            <div class="lead-name"><span class="lead-icon" style="color: var(--purple)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 5-8 5-8-5 8-5z"/><path d="M4 13l8 5 8-5"/></svg></span> Judgment</div>
-            <span class="lead-count" id="count-judgment">0</span>
-          </div>
-          <div class="lead-row" data-filter="lien" title="Lien" onclick="filterLeads('lien')">
-            <div class="lead-name"><span class="lead-icon" style="color: var(--blue)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span> Lien</div>
-            <span class="lead-count" id="count-lien">0</span>
-          </div>
-          <div class="lead-row" data-filter="probate" title="Probate" onclick="filterLeads('probate')">
-            <div class="lead-name"><span class="lead-icon" style="color: var(--green)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> Probate</div>
-            <span class="lead-count" id="count-probate">0</span>
-          </div>
-          <div class="lead-row" data-filter="vacant" title="Vacant" onclick="filterLeads('vacant')">
-            <div class="lead-name"><span class="lead-icon" style="color: var(--text-3)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><line x1="9" y1="15" x2="15" y2="9"/><line x1="9" y1="9" x2="15" y2="15"/></svg></span> Vacant</div>
-            <span class="lead-count" id="count-vacant">0</span>
-          </div>
-          <div class="lead-row" data-filter="code_violation" title="Code violation" onclick="filterLeads('code_violation')">
-            <div class="lead-name"><span class="lead-icon" style="color: #b45309"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span> Code violation</div>
-            <span class="lead-count" id="count-code_violation">0</span>
-          </div>
-        </div>
 
-        <div class="side-panel">
-          <h3>Score Filters</h3>
-          <div class="lead-row active" data-score="all" title="All Scores" onclick="filterScore('all')">
-            <div class="lead-name"><span class="lead-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 8 22 9 17 14 18 21 12 17 6 21 7 14 2 9 9 8"/></svg></span> All Scores</div>
-            <span class="lead-count" id="score-count-all">0</span>
-          </div>
-          <div class="lead-row" data-score="hot" title="Hot (&ge;70)" onclick="filterScore('hot')">
-            <div class="lead-name"><span class="lead-icon" style="color: var(--red)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span> Hot (≥70)</div>
-            <span class="lead-count" id="score-count-hot">0</span>
-          </div>
-          <div class="lead-row" data-score="warm" title="Warm (&ge;50)" onclick="filterScore('warm')">
-            <div class="lead-name"><span class="lead-icon" style="color: var(--orange)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg></span> Warm (≥50)</div>
-            <span class="lead-count" id="score-count-warm">0</span>
-          </div>
-          <div class="lead-row" data-score="active" title="Active (&ge;30)" onclick="filterScore('active')">
-            <div class="lead-name"><span class="lead-icon" style="color: var(--green)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span> Active (≥30)</div>
-            <span class="lead-count" id="score-count-active">0</span>
-          </div>
-        </div>
-      </div>
 
       <!-- MAIN -->
       <div class="main">
@@ -527,7 +481,59 @@ tbody tr:hover { background: var(--hover-row); }
             <button class="chip" data-type="judgment" onclick="filterLeads('judgment')">Judgment</button>
             <button class="chip" data-type="lien" onclick="filterLeads('lien')">Lien</button>
             <button class="chip" data-type="probate" onclick="filterLeads('probate')">Probate</button>
-            <button class="chip icon-chip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46"/></svg> Filters</button>
+            <div class="filter-dropdown-wrap">
+              <button class="chip icon-chip" id="filters-btn" onclick="toggleFilters(event)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46"/></svg> Filters</button>
+              <div id="filters-panel" class="filters-panel">
+                <div class="fp-section">
+                  <label class="fp-label">Score Range</label>
+                  <div class="fp-range">
+                    <span class="fp-range-sep">Min</span>
+                    <input type="number" id="fp-score-min" class="fp-input" min="0" max="100" value="0" style="width:58px;">
+                    <span class="fp-range-sep">–</span>
+                    <span class="fp-range-sep">Max</span>
+                    <input type="number" id="fp-score-max" class="fp-input" min="0" max="100" value="100" style="width:58px;">
+                  </div>
+                </div>
+                <div class="fp-section">
+                  <label class="fp-label">Owner Location</label>
+                  <div class="fp-radio-group">
+                    <label class="fp-radio"><input type="radio" name="fp-owner-loc" value="all" checked> All owners</label>
+                    <label class="fp-radio"><input type="radio" name="fp-owner-loc" value="mo"> In Missouri</label>
+                    <label class="fp-radio"><input type="radio" name="fp-owner-loc" value="oos"> Out of state</label>
+                  </div>
+                </div>
+                <div class="fp-section">
+                  <label class="fp-label">Years Delinquent (est. from tax owed)</label>
+                  <div class="fp-check-group">
+                    <label class="fp-check"><input type="checkbox" id="fp-delq-1"> &gt;1+ years (&gt;$1,000)</label>
+                    <label class="fp-check"><input type="checkbox" id="fp-delq-2"> &gt;2+ years (&gt;$5,000)</label>
+                    <label class="fp-check"><input type="checkbox" id="fp-delq-3"> &gt;3+ years (&gt;$10,000)</label>
+                    <label class="fp-check"><input type="checkbox" id="fp-delq-4"> &gt;4+ years (&gt;$15,000)</label>
+                  </div>
+                </div>
+                <div class="fp-section">
+                  <label class="fp-label">Minimum Tax Owed</label>
+                  <div style="display:flex;align-items:center;gap:4px;">
+                    <span style="font-size:13px;font-weight:600;color:var(--text-2);">$</span>
+                    <input type="number" id="fp-min-tax" class="fp-input" min="0" value="0" style="width:110px;">
+                  </div>
+                </div>
+                <div class="fp-section">
+                  <label class="fp-label">Vacant Only</label>
+                  <div class="fp-toggle-wrap">
+                    <label class="fp-toggle">
+                      <input type="checkbox" id="fp-vacant" onchange="document.getElementById('fp-vacant-label').textContent=this.checked?'On':'Off'">
+                      <span class="fp-toggle-track"></span>
+                    </label>
+                    <span id="fp-vacant-label" style="font-size:13px;color:var(--text-2);">Off</span>
+                  </div>
+                </div>
+                <div class="fp-footer">
+                  <button class="btn-ghost" style="padding:7px 12px;font-size:12px;" onclick="resetFilters()">Reset</button>
+                  <button class="btn-primary" style="padding:7px 12px;font-size:12px;" onclick="applyFilters()">Apply</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -978,6 +984,8 @@ let state = {
   pageSize: 25
 };
 
+let panelFilters = { scoreMin: 0, scoreMax: 100, ownerLoc: 'all', delinquent: [], minTax: 0, vacantOnly: false };
+
 // ============================================================================
 // RENDERING
 // ============================================================================
@@ -996,6 +1004,19 @@ function getFilteredLeads() {
     const q = state.search.toLowerCase();
     leads = leads.filter(l => [l.owner, l.prop_addr, l.doc_num, l.via].some(f => (f||'').toLowerCase().includes(q)));
   }
+  // Panel filters
+  leads = leads.filter(l => l.score >= panelFilters.scoreMin && l.score <= panelFilters.scoreMax);
+  if (panelFilters.ownerLoc === 'mo') {
+    leads = leads.filter(l => /,\s*MO\b/.test(l.mail_city));
+  } else if (panelFilters.ownerLoc === 'oos') {
+    leads = leads.filter(l => l.mail_city !== '—' && !/,\s*MO\b/.test(l.mail_city));
+  }
+  if (panelFilters.delinquent.length > 0) {
+    const strictest = Math.max(...panelFilters.delinquent);
+    leads = leads.filter(l => l.amount > strictest);
+  }
+  if (panelFilters.minTax > 0) leads = leads.filter(l => l.amount >= panelFilters.minTax);
+  if (panelFilters.vacantOnly) leads = leads.filter(l => l.type === 'vacant' || l.flags.some(f => /vacant/i.test(f)));
   if (state.sort === 'score-desc') leads.sort((a,b) => b.score - a.score);
   else if (state.sort === 'score-asc') leads.sort((a,b) => a.score - b.score);
   else if (state.sort === 'date-desc') leads.sort((a,b) => b.filed.localeCompare(a.filed));
@@ -1108,10 +1129,10 @@ function updateCounts() {
     const el = document.getElementById('count-' + t);
     if (el) el.textContent = count;
   });
-  document.getElementById('score-count-all').textContent = STL_LEADS.length;
-  document.getElementById('score-count-hot').textContent = STL_LEADS.filter(l => l.score >= 70).length;
-  document.getElementById('score-count-warm').textContent = STL_LEADS.filter(l => l.score >= 50 && l.score < 70).length;
-  document.getElementById('score-count-active').textContent = STL_LEADS.filter(l => l.score >= 30).length;
+  const scAll = document.getElementById('score-count-all'); if (scAll) scAll.textContent = STL_LEADS.length;
+  const scHot = document.getElementById('score-count-hot'); if (scHot) scHot.textContent = STL_LEADS.filter(l => l.score >= 70).length;
+  const scWarm = document.getElementById('score-count-warm'); if (scWarm) scWarm.textContent = STL_LEADS.filter(l => l.score >= 50 && l.score < 70).length;
+  const scActive = document.getElementById('score-count-active'); if (scActive) scActive.textContent = STL_LEADS.filter(l => l.score >= 30).length;
 
   document.getElementById('stat-total').textContent = STL_LEADS.length.toLocaleString();
   document.getElementById('stat-hot').textContent = STL_LEADS.filter(l => l.score >= 70).length;
@@ -1138,6 +1159,51 @@ function filterScore(s) {
   state.scoreFilter = s;
   state.page = 1;
   document.querySelectorAll('.lead-row[data-score]').forEach(r => r.classList.toggle('active', r.dataset.score === s));
+  renderTable();
+}
+
+function toggleFilters(e) {
+  e.stopPropagation();
+  const panel = document.getElementById('filters-panel');
+  if (panel.classList.contains('open')) {
+    panel.classList.remove('open');
+    document.removeEventListener('click', _closeFPOutside);
+  } else {
+    panel.classList.add('open');
+    setTimeout(() => document.addEventListener('click', _closeFPOutside), 0);
+  }
+}
+function _closeFPOutside(e) {
+  const panel = document.getElementById('filters-panel');
+  const btn = document.getElementById('filters-btn');
+  if (panel && btn && !panel.contains(e.target) && !btn.contains(e.target)) {
+    panel.classList.remove('open');
+    document.removeEventListener('click', _closeFPOutside);
+  }
+}
+function applyFilters() {
+  panelFilters.scoreMin = Math.max(0, parseInt(document.getElementById('fp-score-min').value) || 0);
+  panelFilters.scoreMax = Math.min(100, parseInt(document.getElementById('fp-score-max').value) || 100);
+  panelFilters.ownerLoc = document.querySelector('input[name="fp-owner-loc"]:checked').value;
+  const thresholds = [[1,1000],[2,5000],[3,10000],[4,15000]];
+  panelFilters.delinquent = thresholds.filter(([n]) => document.getElementById(`fp-delq-${n}`).checked).map(([,t]) => t);
+  panelFilters.minTax = Math.max(0, parseFloat(document.getElementById('fp-min-tax').value) || 0);
+  panelFilters.vacantOnly = document.getElementById('fp-vacant').checked;
+  state.page = 1;
+  renderTable();
+  document.getElementById('filters-panel').classList.remove('open');
+  document.removeEventListener('click', _closeFPOutside);
+}
+function resetFilters() {
+  panelFilters = { scoreMin: 0, scoreMax: 100, ownerLoc: 'all', delinquent: [], minTax: 0, vacantOnly: false };
+  document.getElementById('fp-score-min').value = 0;
+  document.getElementById('fp-score-max').value = 100;
+  document.querySelector('input[name="fp-owner-loc"][value="all"]').checked = true;
+  [1,2,3,4].forEach(n => { document.getElementById(`fp-delq-${n}`).checked = false; });
+  document.getElementById('fp-min-tax').value = 0;
+  document.getElementById('fp-vacant').checked = false;
+  document.getElementById('fp-vacant-label').textContent = 'Off';
+  state.page = 1;
   renderTable();
 }
 
@@ -1392,20 +1458,6 @@ function handleSkipTraceUpload(event) {
   };
   reader.readAsText(file);
 }
-
-// Sidebar collapse toggle
-function toggleSidebar() {
-  const layout = document.getElementById('main-layout');
-  const isCollapsed = layout.classList.toggle('sidebar-collapsed');
-  try { localStorage.setItem('stl-sidebar', isCollapsed ? 'collapsed' : 'open'); } catch (e) {}
-}
-
-// Restore sidebar state on first load
-try {
-  if (localStorage.getItem('stl-sidebar') === 'collapsed') {
-    document.getElementById('main-layout').classList.add('sidebar-collapsed');
-  }
-} catch (e) {}
 
 document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
 
