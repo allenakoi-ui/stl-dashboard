@@ -688,6 +688,100 @@ tbody tr:hover { background: var(--hover-row); }
 
 <div class="toast" id="toast"></div>
 
+<!-- ===========================================================
+     PHASE 2E PATCH — wires dashboard to real Postgres API
+     Place this <script> tag IMMEDIATELY BEFORE the existing
+     main <script> tag in index.html (the one that defines STL_LEADS)
+     =========================================================== -->
+<script>
+// Configuration — point this at your API
+window.STL_API_BASE = 'http://134.122.2.38:5000';
+
+// Fetch real leads from the API and re-render the dashboard
+window.loadRealLeads = async function() {
+  try {
+    // Pull a generous slice — we want everything score >= 30
+    const res = await fetch(`${window.STL_API_BASE}/api/leads?min_score=30&limit=1000`);
+    if (!res.ok) throw new Error(`API returned ${res.status}`);
+    const data = await res.json();
+
+    if (!data.leads || data.leads.length === 0) {
+      console.warn('API returned no leads');
+      return;
+    }
+
+    // Transform API leads → dashboard format
+    const transformed = data.leads.map(l => {
+      const flags = [];
+      if (l.total_tax_owed > 0) flags.push('Tax delinquent');
+      if (l.total_tax_owed > 5000) flags.push('Heavy delinquent');
+      if (l.vacant_lot) flags.push('Vacant');
+      if (l.owner_state &amp;&amp; l.owner_state !== 'MO') flags.push('Out-of-state owner');
+      if (l.total_tax_owed > 0 &amp;&amp; l.vacant_lot) flags.push('STACKED');
+      if (flags.length === 0) flags.push('Active');
+
+      const ownerCity = (l.owner_city || '').toUpperCase();
+      const ownerState = l.owner_state || '';
+      const ownerZip = l.owner_zip || '';
+      const propCity = `ST LOUIS, MO ${ownerZip &amp;&amp; ownerState === 'MO' ? ownerZip : ''}`.trim();
+
+      // Decide a "type" so the existing filters work
+      let type = 'tax';
+      if (l.vacant_lot &amp;&amp; l.total_tax_owed > 0) type = 'tax';
+      else if (l.vacant_lot) type = 'vacant';
+      else if (l.total_tax_owed > 0) type = 'tax';
+      else type = 'tax';
+
+      // Score meta tier
+      let scoreMeta = 'low';
+      if (l.score >= 70) scoreMeta = 'high';
+      else if (l.score >= 50) scoreMeta = 'med';
+
+      return {
+        score: l.score,
+        type: type,
+        doc_kind: 'PARCEL',
+        filed: '—',
+        owner: l.owner_name || '—',
+        via: 'COLLECTOR OF REVENUE',
+        prop_addr: l.full_situs_addr || '—',
+        prop_city: propCity || 'ST LOUIS, MO',
+        mail_addr: l.owner_addr || '—',
+        mail_city: ownerCity ? `${ownerCity}, ${ownerState} ${ownerZip}`.trim() : '—',
+        amount: l.total_tax_owed || 0,
+        flags: flags,
+        score_meta: scoreMeta,
+        doc_num: l.parcel_key,
+        doc_src: 'Property Tax Roll'
+      };
+    });
+
+    // Replace the in-memory mock data
+    STL_LEADS.length = 0;
+    transformed.forEach(t => STL_LEADS.push(t));
+
+    // Update last-updated indicator
+    const lu = document.getElementById('last-updated');
+    if (lu) lu.textContent = new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+
+    // Re-render everything
+    if (typeof updateCounts === 'function') updateCounts();
+    if (typeof renderTable === 'function') renderTable();
+
+    console.log(`Loaded ${STL_LEADS.length} real leads from API`);
+  } catch (err) {
+    console.error('Failed to load real leads:', err);
+    // Leave the mock data in place as a fallback
+  }
+};
+
+// Auto-run after the page is ready
+window.addEventListener('DOMContentLoaded', () => {
+  // Slight delay so the existing init code finishes first
+  setTimeout(() => window.loadRealLeads(), 100);
+});
+</script>
+
 <script>
 // ============================================================================
 // MOCK DATA — represents what the scrapers would produce in production
