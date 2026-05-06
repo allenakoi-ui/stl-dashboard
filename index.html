@@ -716,7 +716,7 @@ window.loadRealLeads = async function() {
       if (l.total_tax_owed > 0) flags.push('Tax delinquent');
       if (l.total_tax_owed > 5000) flags.push('Heavy delinquent');
       if (l.vacant_lot) flags.push('Vacant');
-      if (l.owner_state &&; l.owner_state !== 'MO') flags.push('Out-of-state owner');
+      if (l.owner_state && l.owner_state !== 'MO') flags.push('Out-of-state owner');
       if (l.total_tax_owed > 0 && l.vacant_lot) flags.push('STACKED');
       if (flags.length === 0) flags.push('Active');
 
