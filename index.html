@@ -721,13 +721,20 @@ window.loadRealLeads = async function() {
 
     // Transform API leads → dashboard format
     const transformed = data.leads.map(l => {
-      const flags = [];
-      if (l.total_tax_owed > 0) flags.push('Tax delinquent');
-      if (l.total_tax_owed > 5000) flags.push('Heavy delinquent');
-      if (l.vacant_lot) flags.push('Vacant');
-      if (l.owner_state && l.owner_state !== 'MO') flags.push('Out-of-state owner');
-      if (l.total_tax_owed > 0 && l.vacant_lot) flags.push('STACKED');
-      if (flags.length === 0) flags.push('Active');
+      // Use backend-computed display_flags if present, fallback to old logic for safety
+      const flags = (l.display_flags && Array.isArray(l.display_flags) && l.display_flags.length > 0)
+        ? l.display_flags
+        : (() => {
+            const fb = [];
+            if (l.distress_stack_count >= 4) fb.push({label: 'STACKED', severity: 'hot'});
+            if (l.est_years_delinquent >= 3) fb.push({label: '3+ yrs delinquent', severity: 'hot'});
+            else if (l.est_years_delinquent === 2) fb.push({label: '2 yrs delinquent', severity: 'hot'});
+            else if (l.total_tax_owed > 0) fb.push({label: 'Tax delinquent', severity: 'hot'});
+            if (l.vacant_lot) fb.push({label: 'Vacant', severity: 'warn'});
+            if (l.owner_state && l.owner_state !== 'MO') fb.push({label: 'Out-of-state owner', severity: 'warn'});
+            if (fb.length === 0) fb.push({label: 'Active', severity: 'info'});
+            return fb;
+          })();
 
       const ownerCity = (l.owner_city || '').toUpperCase();
       const ownerState = l.owner_state || '';
@@ -1054,11 +1061,16 @@ function typeBadge(type) {
 
 function flagPills(flags) {
   return flags.map(f => {
-    const isHot = /STACKED|delinquent|Tax|Sale|Condemnation|Vacant 2/i.test(f);
-    const isInfo = /Owner|LLC|Absentee|New this/i.test(f);
-    const isWarn = /Probate|Decedent|Code|lien/i.test(f);
-    const cls = isHot ? 'hot' : isWarn ? 'warn' : isInfo ? 'info' : '';
-    return `<span class="flag-pill ${cls}">${f}</span>`;
+    // Support both legacy string flags and new {label, severity} objects
+    if (typeof f === 'string') {
+      const isHot = /STACKED|delinquent|Tax|Sale|Condemnation|Vacant 2/i.test(f);
+      const isInfo = /Owner|LLC|Absentee|New this/i.test(f);
+      const isWarn = /Probate|Decedent|Code|lien/i.test(f);
+      const cls = isHot ? 'hot' : isWarn ? 'warn' : isInfo ? 'info' : '';
+      return `<span class="flag-pill ${cls}">${f}</span>`;
+    }
+    const cls = f.severity || 'info';
+    return `<span class="flag-pill ${cls}">${f.label}</span>`;
   }).join('');
 }
 
