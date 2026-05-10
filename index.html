@@ -193,6 +193,9 @@ tbody tr:hover { background: var(--hover-row); }
 .score-meta.low { background: var(--blue-100); color: var(--blue); }
 .score-meta.med { background: var(--amber-50); color: var(--amber); }
 .score-meta.high { background: var(--red-100); color: var(--red); }
+.motiv-label { font-size: 10px; font-weight: 700; color: var(--text-3); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+.confidence-line { font-size: 10px; color: var(--text-2); margin-top: 3px; font-weight: 500; }
+.missing-line { font-size: 10px; color: var(--text-3); margin-top: 2px; font-style: italic; }
 
 .owner-cell { font-weight: 600; font-size: 13px; }
 .owner-via { font-size: 11px; color: var(--text-3); margin-top: 2px; }
@@ -744,7 +747,7 @@ window.loadRealLeads = async function() {
       else if (l.score >= 50) scoreMeta = 'med';
 
       return {
-        score: l.score,
+        score: l.composite_score ?? l.score ?? 0,
         type: type,
         doc_kind: 'PARCEL',
         filed: '—',
@@ -758,7 +761,9 @@ window.loadRealLeads = async function() {
         flags: flags,
         score_meta: scoreMeta,
         doc_num: l.parcel_key,
-        doc_src: 'Property Tax Roll'
+        doc_src: 'Property Tax Roll',
+        confidence_tier: l.confidence_tier || 'Low',
+        missing_sources: l.missing_sources || []
       };
     });
 
@@ -1071,7 +1076,9 @@ function renderTable() {
     <tr>
       <td>
         <div class="score-badge ${scoreClass(l.score)}">${l.score}</div>
-        <div class="score-meta ${l.score_meta}">${l.score_meta.toUpperCase()}</div>
+        <div class="motiv-label">Motivation Score</div>
+        <div class="confidence-line">Confidence: ${l.confidence_tier || 'Low'}</div>
+        ${(l.missing_sources && l.missing_sources.length > 0) ? `<div class="missing-line">Missing: ${l.missing_sources.join(', ').replace(/_/g, ' ')}</div>` : ''}
       </td>
       <td>${typeBadge(l.type)}</td>
       <td><strong>${l.doc_kind}</strong></td>
