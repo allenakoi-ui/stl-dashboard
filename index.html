@@ -380,6 +380,15 @@ tbody tr:hover { background: var(--hover-row); }
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           Import Tax List
         </button>
+        <select id="export-limit" style="background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:7px 10px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;">
+          <option value="100">Top 100</option>
+          <option value="500">Top 500</option>
+          <option value="1000">Top 1000</option>
+        </select>
+        <button class="btn-ghost" onclick="exportGeneric()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Generic CSV
+        </button>
         <button class="btn-ghost" onclick="exportSkipTrace()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Skip Trace CSV
@@ -1393,27 +1402,30 @@ function exportComps() { showToast('Comps CSV exported'); }
 // ============================================================================
 // EXPORTS
 // ============================================================================
-function exportSkipTrace() {
-  const leads = getFilteredLeads();
-  const rows = [['owner','prop_addr','prop_city','mail_addr','mail_city','score','type']];
-  leads.forEach(l => rows.push([l.owner, l.prop_addr, l.prop_city, l.mail_addr, l.mail_city, l.score, l.type]));
-  downloadCsv('stl_skip_trace.csv', rows);
-  showToast(`Skip trace exported (${leads.length} records)`);
+async function _apiExport(format) {
+  const limit = parseInt(document.getElementById('export-limit').value) || 100;
+  const params = new URLSearchParams({ format, limit });
+  if (panelFilters.scoreMin > 0) params.set('min_score', panelFilters.scoreMin);
+  if (panelFilters.vacantOnly) params.set('vacant_only', '1');
+  if (panelFilters.delinquent.length > 0) params.set('delinquent_only', '1');
+  showToast(`Preparing ${format} export…`);
+  try {
+    const res = await fetch(`${window.STL_API_BASE}/api/export?${params}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const blob = await res.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `stl_leads_${format}_${limit}.csv`;
+    a.click();
+    showToast(`${format} CSV downloaded (${limit} leads)`);
+  } catch(e) {
+    showToast('Export failed — check console');
+    console.error(e);
+  }
 }
-
-function exportGHL() {
-  const leads = getFilteredLeads();
-  const rows = [['firstName','lastName','phone','email','address1','city','state','postalCode','tags','customField.score','customField.lead_type','customField.amount','customField.doc_num']];
-  leads.forEach(l => {
-    const parts = l.owner.split(' ');
-    const last = parts[0] || '';
-    const first = parts.slice(1).join(' ') || '';
-    const cityParts = (l.prop_city || '').split(', ');
-    rows.push([first, last, '', '', l.prop_addr, cityParts[0]||'', 'MO', (cityParts[1]||'').replace('MO ',''), `STL,${l.type},${l.flags.join('|')}`, l.score, l.type, l.amount, l.doc_num]);
-  });
-  downloadCsv('stl_ghl_jarvis.csv', rows);
-  showToast(`GHL CSV exported (${leads.length} records)`);
-}
+function exportGeneric()   { _apiExport('generic');  }
+function exportSkipTrace() { _apiExport('skiptrace'); }
+function exportGHL()       { _apiExport('ghl');       }
 
 function downloadCsv(name, rows) {
   const csv = rows.map(r => r.map(c => `"${String(c||'').replace(/"/g,'""')}"`).join(',')).join('\n');
