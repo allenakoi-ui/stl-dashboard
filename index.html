@@ -551,6 +551,7 @@ tbody tr:hover { background: var(--hover-row); }
             <thead>
               <tr>
                 <th>Score</th>
+                <th>Stack</th>
                 <th>Type</th>
                 <th>Doc</th>
                 <th>Filed</th>
@@ -770,7 +771,8 @@ window.loadRealLeads = async function() {
         doc_num: l.parcel_key,
         doc_src: 'Property Tax Roll',
         confidence_tier: l.confidence_tier || 'Low',
-        missing_sources: l.missing_sources || []
+        missing_sources: l.missing_sources || [],
+        distress_stack_count: l.distress_stack_count || 0
       };
     });
 
@@ -1059,6 +1061,20 @@ function typeBadge(type) {
   return `<span class="type-badge ${t.cls}">${t.icon} ${t.label}</span>`;
 }
 
+function getStackBadge(count) {
+  const c = parseInt(count) || 0;
+  let bg, label;
+  if (c >= 5)      { bg = '#dc2626'; label = 'Hot'; }
+  else if (c >= 3) { bg = '#d97706'; label = 'Warm'; }
+  else if (c >= 1) { bg = '#475569'; label = 'Single'; }
+  else             { bg = '#9ca3af'; label = 'None'; }
+  return `<span style="display:inline-block;padding:2px 8px;
+    border-radius:10px;background:${bg};color:#fff;
+    font-size:11px;font-weight:600;min-width:46px;
+    text-align:center;" title="${c} distress signal${c===1?'':'s'}">
+    ${c} · ${label}</span>`;
+}
+
 function flagPills(flags) {
   return flags.map(f => {
     // Support both legacy string flags and new {label, severity} objects
@@ -1092,6 +1108,7 @@ function renderTable() {
         <div class="confidence-line">Confidence: ${l.confidence_tier || 'Low'}</div>
         ${(l.missing_sources && l.missing_sources.length > 0) ? `<div class="missing-line">Missing: ${l.missing_sources.join(', ').replace(/_/g, ' ')}</div>` : ''}
       </td>
+      <td>${getStackBadge(l.distress_stack_count)}</td>
       <td>${typeBadge(l.type)}</td>
       <td><strong>${l.doc_kind}</strong></td>
       <td>${l.filed}</td>
@@ -1115,7 +1132,7 @@ function renderTable() {
         <a class="doc-link" href="#">${l.doc_src} ↗</a>
       </td>
     </tr>
-  `).join('') || `<tr><td colspan="11" style="text-align: center; padding: 40px; color: var(--text-3);">No leads match the current filters.</td></tr>`;
+  `).join('') || `<tr><td colspan="12" style="text-align: center; padding: 40px; color: var(--text-3);">No leads match the current filters.</td></tr>`;
 
   document.getElementById('shown-count').textContent = pageLeads.length;
   document.getElementById('total-count').textContent = leads.length;
