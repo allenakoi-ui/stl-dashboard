@@ -540,6 +540,16 @@ tbody tr:hover { background: var(--hover-row); }
                     <span id="fp-vacant-label" style="font-size:13px;color:var(--text-2);">Off</span>
                   </div>
                 </div>
+                <div class="fp-section">
+                  <label class="fp-label">Individual owners only</label>
+                  <div class="fp-toggle-wrap">
+                    <label class="fp-toggle">
+                      <input type="checkbox" id="fp-individual" onchange="document.getElementById('fp-individual-label').textContent=this.checked?'On':'Off'">
+                      <span class="fp-toggle-track"></span>
+                    </label>
+                    <span id="fp-individual-label" style="font-size:13px;color:var(--text-2);">Off</span>
+                  </div>
+                </div>
                 <div class="fp-footer">
                   <button class="btn-ghost" style="padding:7px 12px;font-size:12px;" onclick="resetFilters()">Reset</button>
                   <button class="btn-primary" style="padding:7px 12px;font-size:12px;" onclick="applyFilters()">Apply</button>
@@ -720,7 +730,9 @@ window.STL_API_BASE = 'https://stlproperty.duckdns.org';
 window.loadRealLeads = async function() {
   try {
     // Pull a generous slice — we want everything score >= 30
-    const res = await fetch(`${window.STL_API_BASE}/api/leads?min_score=30&limit=1000`);
+    const leadsParams = new URLSearchParams({ min_score: 30, limit: 1000 });
+    if (panelFilters && panelFilters.individualOnly) leadsParams.set('individual_only', '1');
+    const res = await fetch(`${window.STL_API_BASE}/api/leads?${leadsParams}`);
     if (!res.ok) throw new Error(`API returned ${res.status}`);
     const data = await res.json();
 
@@ -1007,7 +1019,7 @@ let state = {
   pageSize: 25
 };
 
-let panelFilters = { scoreMin: 0, scoreMax: 100, ownerLoc: 'all', delinquent: [], minTax: 0, vacantOnly: false };
+let panelFilters = { scoreMin: 0, scoreMax: 100, ownerLoc: 'all', delinquent: [], minTax: 0, vacantOnly: false, individualOnly: false };
 
 // ============================================================================
 // RENDERING
@@ -1227,6 +1239,7 @@ function _closeFPOutside(e) {
   }
 }
 function applyFilters() {
+  const prevIndividual = panelFilters.individualOnly;
   panelFilters.scoreMin = Math.max(0, parseInt(document.getElementById('fp-score-min').value) || 0);
   panelFilters.scoreMax = Math.min(100, parseInt(document.getElementById('fp-score-max').value) || 100);
   panelFilters.ownerLoc = document.querySelector('input[name="fp-owner-loc"]:checked').value;
@@ -1234,13 +1247,19 @@ function applyFilters() {
   panelFilters.delinquent = thresholds.filter(([n]) => document.getElementById(`fp-delq-${n}`).checked).map(([,t]) => t);
   panelFilters.minTax = Math.max(0, parseFloat(document.getElementById('fp-min-tax').value) || 0);
   panelFilters.vacantOnly = document.getElementById('fp-vacant').checked;
+  panelFilters.individualOnly = document.getElementById('fp-individual').checked;
   state.page = 1;
-  renderTable();
+  if (panelFilters.individualOnly !== prevIndividual) {
+    window.loadRealLeads();
+  } else {
+    renderTable();
+  }
   document.getElementById('filters-panel').classList.remove('open');
   document.removeEventListener('click', _closeFPOutside);
 }
 function resetFilters() {
-  panelFilters = { scoreMin: 0, scoreMax: 100, ownerLoc: 'all', delinquent: [], minTax: 0, vacantOnly: false };
+  const prevIndividual = panelFilters.individualOnly;
+  panelFilters = { scoreMin: 0, scoreMax: 100, ownerLoc: 'all', delinquent: [], minTax: 0, vacantOnly: false, individualOnly: false };
   document.getElementById('fp-score-min').value = 0;
   document.getElementById('fp-score-max').value = 100;
   document.querySelector('input[name="fp-owner-loc"][value="all"]').checked = true;
@@ -1248,8 +1267,14 @@ function resetFilters() {
   document.getElementById('fp-min-tax').value = 0;
   document.getElementById('fp-vacant').checked = false;
   document.getElementById('fp-vacant-label').textContent = 'Off';
+  document.getElementById('fp-individual').checked = false;
+  document.getElementById('fp-individual-label').textContent = 'Off';
   state.page = 1;
-  renderTable();
+  if (prevIndividual) {
+    window.loadRealLeads();
+  } else {
+    renderTable();
+  }
 }
 
 // ============================================================================
@@ -1408,6 +1433,7 @@ async function _apiExport(format) {
   if (panelFilters.scoreMin > 0) params.set('min_score', panelFilters.scoreMin);
   if (panelFilters.vacantOnly) params.set('vacant_only', '1');
   if (panelFilters.delinquent.length > 0) params.set('delinquent_only', '1');
+  if (panelFilters.individualOnly) params.set('individual_only', '1');
   showToast(`Preparing ${format} export…`);
   try {
     const res = await fetch(`${window.STL_API_BASE}/api/export?${params}`);
