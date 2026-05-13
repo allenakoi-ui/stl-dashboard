@@ -570,7 +570,6 @@ tbody tr:hover { background: var(--hover-row); }
             <thead>
               <tr>
                 <th>Score</th>
-                <th>Stack</th>
                 <th>Type</th>
                 <th>Doc</th>
                 <th>Filed</th>
@@ -1096,8 +1095,14 @@ function getStackBadge(count) {
     ${c} · ${label}</span>`;
 }
 
+function stackedPill(count) {
+  const c = parseInt(count) || 0;
+  if (c < 1) return '';
+  return `<span class="flag-pill hot">STACKED (${c})</span>`;
+}
+
 function flagPills(flags) {
-  return flags.map(f => {
+  return flags.filter(f => (typeof f === 'string' ? f !== 'STACKED' : f.label !== 'STACKED')).map(f => {
     // Support both legacy string flags and new {label, severity} objects
     if (typeof f === 'string') {
       const isHot = /STACKED|delinquent|Tax|Sale|Condemnation|Vacant 2/i.test(f);
@@ -1129,7 +1134,6 @@ function renderTable() {
         <div class="confidence-line">Confidence: ${l.confidence_tier || 'Low'}</div>
         ${(l.missing_sources && l.missing_sources.length > 0) ? `<div class="missing-line">Missing: ${l.missing_sources.join(', ').replace(/_/g, ' ')}</div>` : ''}
       </td>
-      <td>${getStackBadge(l.distress_stack_count)}</td>
       <td>${typeBadge(l.type)}</td>
       <td><strong>${l.doc_kind}</strong></td>
       <td>${l.filed}</td>
@@ -1146,14 +1150,14 @@ function renderTable() {
         <div class="addr-line2">${l.mail_city}</div>
       </td>
       <td><span class="amount">${fmtMoney(l.amount)}</span></td>
-      <td><div class="flag-list">${flagPills(l.flags)}</div></td>
+      <td><div class="flag-list">${stackedPill(l.distress_stack_count)}${flagPills(l.flags)}</div></td>
       <td style="color: var(--text-3);">—</td>
       <td>
         <div class="doc-num">#${l.doc_num}</div>
         <a class="doc-link" href="#">${l.doc_src} ↗</a>
       </td>
     </tr>
-  `).join('') || `<tr><td colspan="12" style="text-align: center; padding: 40px; color: var(--text-3);">No leads match the current filters.</td></tr>`;
+  `).join('') || `<tr><td colspan="11" style="text-align: center; padding: 40px; color: var(--text-3);">No leads match the current filters.</td></tr>`;
 
   document.getElementById('shown-count').textContent = pageLeads.length;
   document.getElementById('total-count').textContent = leads.length;
