@@ -741,7 +741,10 @@ window.loadRealLeads = async function() {
     // Pull a generous slice — we want everything score >= 30
     const leadsParams = new URLSearchParams({ min_score: 30, limit: 1000 });
     if (panelFilters && panelFilters.individualOnly) leadsParams.set('individual_only', '1');
-    if (panelFilters && panelFilters.probate) leadsParams.set(panelFilters.probate, '1');
+    if (panelFilters && panelFilters.probate) {
+      appendProbateParam(leadsParams);
+      leadsParams.set('min_score', '0');  // probate parcels have low composite scores
+    }
     const res = await fetch(`${window.STL_API_BASE}/api/leads?${leadsParams}`);
     if (!res.ok) throw new Error(`API returned ${res.status}`);
     const data = await res.json();
@@ -1444,6 +1447,10 @@ function exportComps() { showToast('Comps CSV exported'); }
 // ============================================================================
 // EXPORTS
 // ============================================================================
+function appendProbateParam(params) {
+  if (panelFilters.probate) params.set(panelFilters.probate, '1');
+}
+
 async function _apiExport(format) {
   const limit = parseInt(document.getElementById('export-limit').value) || 100;
   const params = new URLSearchParams({ format, limit });
@@ -1451,7 +1458,7 @@ async function _apiExport(format) {
   if (panelFilters.vacantOnly) params.set('vacant_only', '1');
   if (panelFilters.delinquent.length > 0) params.set('delinquent_only', '1');
   if (panelFilters.individualOnly) params.set('individual_only', '1');
-  if (panelFilters.probate) params.set(panelFilters.probate, '1');
+  appendProbateParam(params);
   showToast(`Preparing ${format} export…`);
   try {
     const res = await fetch(`${window.STL_API_BASE}/api/export?${params}`);
