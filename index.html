@@ -550,6 +550,16 @@ tbody tr:hover { background: var(--hover-row); }
                     <span id="fp-individual-label" style="font-size:13px;color:var(--text-2);">Off</span>
                   </div>
                 </div>
+                <div class="fp-section">
+                  <label class="fp-label">Probate Signal</label>
+                  <div class="fp-radio-group">
+                    <label class="fp-radio"><input type="radio" name="fp-probate" value="" checked> None</label>
+                    <label class="fp-radio"><input type="radio" name="fp-probate" value="probate"> Any probate</label>
+                    <label class="fp-radio"><input type="radio" name="fp-probate" value="probate_inherited"> Inherited</label>
+                    <label class="fp-radio"><input type="radio" name="fp-probate" value="probate_deceased"> Deceased</label>
+                    <label class="fp-radio"><input type="radio" name="fp-probate" value="probate_needs_review"> Needs review</label>
+                  </div>
+                </div>
                 <div class="fp-footer">
                   <button class="btn-ghost" style="padding:7px 12px;font-size:12px;" onclick="resetFilters()">Reset</button>
                   <button class="btn-primary" style="padding:7px 12px;font-size:12px;" onclick="applyFilters()">Apply</button>
@@ -731,6 +741,7 @@ window.loadRealLeads = async function() {
     // Pull a generous slice — we want everything score >= 30
     const leadsParams = new URLSearchParams({ min_score: 30, limit: 1000 });
     if (panelFilters && panelFilters.individualOnly) leadsParams.set('individual_only', '1');
+    if (panelFilters && panelFilters.probate) leadsParams.set(panelFilters.probate, '1');
     const res = await fetch(`${window.STL_API_BASE}/api/leads?${leadsParams}`);
     if (!res.ok) throw new Error(`API returned ${res.status}`);
     const data = await res.json();
@@ -1018,7 +1029,7 @@ let state = {
   pageSize: 25
 };
 
-let panelFilters = { scoreMin: 0, scoreMax: 100, ownerLoc: 'all', delinquent: [], minTax: 0, vacantOnly: false, individualOnly: false };
+let panelFilters = { scoreMin: 0, scoreMax: 100, ownerLoc: 'all', delinquent: [], minTax: 0, vacantOnly: false, individualOnly: false, probate: '' };
 
 // ============================================================================
 // RENDERING
@@ -1242,6 +1253,7 @@ function _closeFPOutside(e) {
 }
 function applyFilters() {
   const prevIndividual = panelFilters.individualOnly;
+  const prevProbate = panelFilters.probate;
   panelFilters.scoreMin = Math.max(0, parseInt(document.getElementById('fp-score-min').value) || 0);
   panelFilters.scoreMax = Math.min(100, parseInt(document.getElementById('fp-score-max').value) || 100);
   panelFilters.ownerLoc = document.querySelector('input[name="fp-owner-loc"]:checked').value;
@@ -1250,8 +1262,9 @@ function applyFilters() {
   panelFilters.minTax = Math.max(0, parseFloat(document.getElementById('fp-min-tax').value) || 0);
   panelFilters.vacantOnly = document.getElementById('fp-vacant').checked;
   panelFilters.individualOnly = document.getElementById('fp-individual').checked;
+  panelFilters.probate = document.querySelector('input[name="fp-probate"]:checked').value;
   state.page = 1;
-  if (panelFilters.individualOnly !== prevIndividual) {
+  if (panelFilters.individualOnly !== prevIndividual || panelFilters.probate !== prevProbate) {
     window.loadRealLeads();
   } else {
     renderTable();
@@ -1261,7 +1274,8 @@ function applyFilters() {
 }
 function resetFilters() {
   const prevIndividual = panelFilters.individualOnly;
-  panelFilters = { scoreMin: 0, scoreMax: 100, ownerLoc: 'all', delinquent: [], minTax: 0, vacantOnly: false, individualOnly: false };
+  const prevProbate = panelFilters.probate;
+  panelFilters = { scoreMin: 0, scoreMax: 100, ownerLoc: 'all', delinquent: [], minTax: 0, vacantOnly: false, individualOnly: false, probate: '' };
   document.getElementById('fp-score-min').value = 0;
   document.getElementById('fp-score-max').value = 100;
   document.querySelector('input[name="fp-owner-loc"][value="all"]').checked = true;
@@ -1271,8 +1285,9 @@ function resetFilters() {
   document.getElementById('fp-vacant-label').textContent = 'Off';
   document.getElementById('fp-individual').checked = false;
   document.getElementById('fp-individual-label').textContent = 'Off';
+  document.querySelector('input[name="fp-probate"][value=""]').checked = true;
   state.page = 1;
-  if (prevIndividual) {
+  if (prevIndividual || prevProbate) {
     window.loadRealLeads();
   } else {
     renderTable();
@@ -1436,6 +1451,7 @@ async function _apiExport(format) {
   if (panelFilters.vacantOnly) params.set('vacant_only', '1');
   if (panelFilters.delinquent.length > 0) params.set('delinquent_only', '1');
   if (panelFilters.individualOnly) params.set('individual_only', '1');
+  if (panelFilters.probate) params.set(panelFilters.probate, '1');
   showToast(`Preparing ${format} export…`);
   try {
     const res = await fetch(`${window.STL_API_BASE}/api/export?${params}`);
