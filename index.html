@@ -560,6 +560,17 @@ tbody tr:hover { background: var(--hover-row); }
                     <label class="fp-radio"><input type="radio" name="fp-probate" value="probate_needs_review"> Needs review</label>
                   </div>
                 </div>
+                <div class="fp-section">
+                  <label class="fp-label">Priority Leads</label>
+                  <div class="fp-toggle-wrap">
+                    <label class="fp-toggle">
+                      <input type="checkbox" id="fp-callnow" onchange="document.getElementById('fp-callnow-label').textContent=this.checked?'On':'Off'">
+                      <span class="fp-toggle-track"></span>
+                    </label>
+                    <span id="fp-callnow-label" style="font-size:13px;color:var(--text-2);">Off</span>
+                  </div>
+                  <div style="font-size:11px;color:var(--text-3);margin-top:6px;">Pre-foreclosure, probate, or stacked distress</div>
+                </div>
                 <div class="fp-footer">
                   <button class="btn-ghost" style="padding:7px 12px;font-size:12px;" onclick="resetFilters()">Reset</button>
                   <button class="btn-primary" style="padding:7px 12px;font-size:12px;" onclick="applyFilters()">Apply</button>
@@ -744,6 +755,10 @@ window.loadRealLeads = async function() {
     if (panelFilters && panelFilters.probate) {
       appendProbateParam(leadsParams);
       leadsParams.set('min_score', '0');  // probate parcels have low composite scores
+    }
+    if (panelFilters && panelFilters.callNow) {
+      leadsParams.set('call_now', '1');
+      leadsParams.set('min_score', '0');  // pre-foreclosure parcels have score=0
     }
     const res = await fetch(`${window.STL_API_BASE}/api/leads?${leadsParams}`);
     if (!res.ok) throw new Error(`API returned ${res.status}`);
@@ -1032,7 +1047,7 @@ let state = {
   pageSize: 25
 };
 
-let panelFilters = { scoreMin: 0, scoreMax: 100, ownerLoc: 'all', delinquent: [], minTax: 0, vacantOnly: false, individualOnly: false, probate: '' };
+let panelFilters = { scoreMin: 0, scoreMax: 100, ownerLoc: 'all', delinquent: [], minTax: 0, vacantOnly: false, individualOnly: false, probate: '', callNow: false };
 
 // ============================================================================
 // RENDERING
@@ -1257,6 +1272,7 @@ function _closeFPOutside(e) {
 function applyFilters() {
   const prevIndividual = panelFilters.individualOnly;
   const prevProbate = panelFilters.probate;
+  const prevCallNow = panelFilters.callNow;
   panelFilters.scoreMin = Math.max(0, parseInt(document.getElementById('fp-score-min').value) || 0);
   panelFilters.scoreMax = Math.min(100, parseInt(document.getElementById('fp-score-max').value) || 100);
   panelFilters.ownerLoc = document.querySelector('input[name="fp-owner-loc"]:checked').value;
@@ -1266,8 +1282,9 @@ function applyFilters() {
   panelFilters.vacantOnly = document.getElementById('fp-vacant').checked;
   panelFilters.individualOnly = document.getElementById('fp-individual').checked;
   panelFilters.probate = document.querySelector('input[name="fp-probate"]:checked').value;
+  panelFilters.callNow = document.getElementById('fp-callnow').checked;
   state.page = 1;
-  if (panelFilters.individualOnly !== prevIndividual || panelFilters.probate !== prevProbate) {
+  if (panelFilters.individualOnly !== prevIndividual || panelFilters.probate !== prevProbate || panelFilters.callNow !== prevCallNow) {
     window.loadRealLeads();
   } else {
     renderTable();
@@ -1278,7 +1295,8 @@ function applyFilters() {
 function resetFilters() {
   const prevIndividual = panelFilters.individualOnly;
   const prevProbate = panelFilters.probate;
-  panelFilters = { scoreMin: 0, scoreMax: 100, ownerLoc: 'all', delinquent: [], minTax: 0, vacantOnly: false, individualOnly: false, probate: '' };
+  const prevCallNow = panelFilters.callNow;
+  panelFilters = { scoreMin: 0, scoreMax: 100, ownerLoc: 'all', delinquent: [], minTax: 0, vacantOnly: false, individualOnly: false, probate: '', callNow: false };
   document.getElementById('fp-score-min').value = 0;
   document.getElementById('fp-score-max').value = 100;
   document.querySelector('input[name="fp-owner-loc"][value="all"]').checked = true;
@@ -1289,8 +1307,10 @@ function resetFilters() {
   document.getElementById('fp-individual').checked = false;
   document.getElementById('fp-individual-label').textContent = 'Off';
   document.querySelector('input[name="fp-probate"][value=""]').checked = true;
+  document.getElementById('fp-callnow').checked = false;
+  document.getElementById('fp-callnow-label').textContent = 'Off';
   state.page = 1;
-  if (prevIndividual || prevProbate) {
+  if (prevIndividual || prevProbate || prevCallNow) {
     window.loadRealLeads();
   } else {
     renderTable();
@@ -1459,6 +1479,7 @@ async function _apiExport(format) {
   if (panelFilters.delinquent.length > 0) params.set('delinquent_only', '1');
   if (panelFilters.individualOnly) params.set('individual_only', '1');
   appendProbateParam(params);
+  if (panelFilters.callNow) params.set('call_now', '1');
   showToast(`Preparing ${format} export…`);
   try {
     const res = await fetch(`${window.STL_API_BASE}/api/export?${params}`);
