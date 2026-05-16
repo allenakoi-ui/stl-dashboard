@@ -323,14 +323,19 @@ tbody tr:hover { background: var(--hover-row); }
 .fp-footer { display: flex; justify-content: flex-end; gap: 8px; padding-top: 12px; border-top: 1px solid var(--border); margin-top: 4px; }
 
 /* Xleads contact badges */
-.contact-badge { display: inline-block; font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-top: 4px; margin-right: 3px; font-weight: 600; white-space: nowrap; }
+.contact-badge { display: inline-block; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 600; white-space: nowrap; }
 .phone-badge { background: var(--green-50); color: var(--green); border: 1px solid var(--green-100); }
 .email-badge { background: var(--blue-50); color: var(--blue); border: 1px solid var(--blue-100); }
+.contact-summary { margin-top: 4px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+.expand-btn { background: none; border: none; font-size: 10px; color: var(--text-3); cursor: pointer; padding: 3px 0 0; display: block; font-weight: 600; letter-spacing: 0.2px; font-family: inherit; }
+.expand-btn:hover { color: var(--blue); }
 .detail-row td { background: var(--blue-50); border-bottom: 1px solid var(--border); }
-html[data-theme="dark"] .detail-row td { background: var(--blue-100); }
+html[data-theme="dark"] .detail-row td { background: var(--gray-cell); }
 .detail-panel { padding: 10px 16px; display: flex; flex-wrap: wrap; gap: 16px; align-items: center; font-size: 12px; color: var(--text-2); }
+.detail-panel .detail-item { display: flex; align-items: center; gap: 5px; }
 .detail-panel .detail-item strong { color: var(--text); }
 .detail-panel .detail-no-contacts { color: var(--text-4); font-style: italic; }
+.dnc-tag { font-size: 9px; font-weight: 700; background: var(--red); color: white; padding: 1px 4px; border-radius: 3px; margin-left: 3px; }
 </style>
 </head>
 <body>
@@ -606,9 +611,7 @@ html[data-theme="dark"] .detail-row td { background: var(--blue-100); }
                 <th>Type</th>
                 <th>Doc</th>
                 <th>Filed</th>
-                <th>Owner / Grantor</th>
-                <th>Property Address</th>
-                <th>Mailing Address</th>
+                <th>Owner</th>
                 <th>Amount</th>
                 <th>Flags</th>
                 <th>Legal Desc</th>
@@ -837,9 +840,12 @@ window.loadRealLeads = async function() {
         xl_phone_1: l.xl_phone_1 || null,
         xl_phone_2: l.xl_phone_2 || null,
         xl_phone_3: l.xl_phone_3 || null,
+        xl_phone_1_dnc: !!l.xl_phone_1_dnc,
+        xl_phone_2_dnc: !!l.xl_phone_2_dnc,
+        xl_phone_3_dnc: !!l.xl_phone_3_dnc,
+        xl_litigator_flag: !!l.xl_litigator_flag,
         xl_email_1: l.xl_email_1 || null,
-        xl_email_2: l.xl_email_2 || null,
-        xl_import_batch_id: l.xl_import_batch_id || null
+        xl_email_2: l.xl_email_2 || null
       };
     });
 
@@ -1167,40 +1173,47 @@ function xlContactBadges(l) {
   const phones = [l.xl_phone_1, l.xl_phone_2, l.xl_phone_3].filter(Boolean);
   const emails = [l.xl_email_1, l.xl_email_2].filter(Boolean);
   if (!phones.length && !emails.length) return '';
-  let out = '';
-  if (phones.length) out += `<span class="contact-badge phone-badge">&#128222; ${phones.length} phone${phones.length > 1 ? 's' : ''}</span>`;
-  if (emails.length) out += `<span class="contact-badge email-badge">&#9993; ${emails.length} email${emails.length > 1 ? 's' : ''}</span>`;
-  return out;
+  const parts = [];
+  if (phones.length) parts.push(`<span class="contact-badge phone-badge">&#128222; ${phones.length} phone${phones.length > 1 ? 's' : ''}</span>`);
+  if (emails.length) parts.push(`<span class="contact-badge email-badge">&#9993; ${emails.length} email${emails.length > 1 ? 's' : ''}</span>`);
+  return `<div class="contact-summary">${parts.join('<span style="color:var(--text-4)">&#183;</span>')}</div>`;
 }
 
 function xlDetailPanel(l) {
+  const litigator = !!l.xl_litigator_flag;
   const phones = [
-    l.xl_phone_1 ? ['Phone 1', l.xl_phone_1] : null,
-    l.xl_phone_2 ? ['Phone 2', l.xl_phone_2] : null,
-    l.xl_phone_3 ? ['Phone 3', l.xl_phone_3] : null,
+    l.xl_phone_1 ? { label: 'Phone 1', val: l.xl_phone_1, dnc: !!l.xl_phone_1_dnc } : null,
+    l.xl_phone_2 ? { label: 'Phone 2', val: l.xl_phone_2, dnc: !!l.xl_phone_2_dnc } : null,
+    l.xl_phone_3 ? { label: 'Phone 3', val: l.xl_phone_3, dnc: !!l.xl_phone_3_dnc } : null,
   ].filter(Boolean);
   const emails = [
     l.xl_email_1 ? ['Email 1', l.xl_email_1] : null,
     l.xl_email_2 ? ['Email 2', l.xl_email_2] : null,
   ].filter(Boolean);
-  const hasBatch = !!l.xl_import_batch_id;
-  if (!phones.length && !emails.length && !hasBatch) {
-    return `<div class="detail-panel"><span class="detail-no-contacts">No contacts</span></div>`;
-  }
-  const phoneHtml = phones.map(([label, val]) =>
-    `<span class="detail-item">&#128222; <strong>${label}:</strong> ${val}</span>`).join('');
-  const emailHtml = emails.map(([label, val]) =>
-    `<span class="detail-item">&#9993; <strong>${label}:</strong> ${val}</span>`).join('');
-  const batchHtml = hasBatch
-    ? `<span class="detail-item" style="color:var(--text-3);">Source: Xleads / ${l.xl_import_batch_id}</span>`
+  const mailLine = (l.mail_addr && l.mail_addr !== '—')
+    ? `<span class="detail-item" style="color:var(--text-3);">&#128140; Mail: ${l.mail_addr}${l.mail_city && l.mail_city !== '—' ? ', ' + l.mail_city : ''}</span>`
     : '';
-  return `<div class="detail-panel">${phoneHtml}${emailHtml}${batchHtml}</div>`;
+  if (!phones.length && !emails.length) {
+    return `<div class="detail-panel"><span class="detail-no-contacts">No contacts</span>${mailLine}</div>`;
+  }
+  const phoneHtml = phones.map(({ label, val, dnc }) => {
+    const doNotCall = dnc || litigator;
+    const color = doNotCall ? 'color:var(--red)' : '';
+    const tag = dnc ? '<span class="dnc-tag">DNC</span>' : '';
+    return `<span class="detail-item"><strong style="${color}">&#128222; ${label}: ${val}</strong>${tag}</span>`;
+  }).join('');
+  const emailHtml = emails.map(([label, val]) =>
+    `<span class="detail-item"><strong>&#9993; ${label}:</strong> ${val}</span>`).join('');
+  return `<div class="detail-panel">${phoneHtml}${emailHtml}${mailLine}</div>`;
 }
 
 function toggleDetail(i) {
   const row = document.getElementById('detail-row-' + i);
   if (!row) return;
-  row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
+  const btn = document.getElementById('expand-btn-' + i);
+  const open = row.style.display !== 'none';
+  row.style.display = open ? 'none' : 'table-row';
+  if (btn) btn.textContent = open ? 'Details ▾' : 'Details ▴';
 }
 
 function renderTable() {
@@ -1214,7 +1227,7 @@ function renderTable() {
   const pageLeads = leads.slice(start, start + state.pageSize);
 
   tbody.innerHTML = pageLeads.map((l, i) => `
-    <tr onclick="toggleDetail(${i})" style="cursor:pointer">
+    <tr>
       <td>
         <div class="score-badge ${scoreClass(l.score)}">${l.score}</div>
         <div class="motiv-label">Motivation Score</div>
@@ -1224,18 +1237,13 @@ function renderTable() {
       <td>${l.filed}</td>
       <td>
         <div class="owner-cell">${l.owner}</div>
-        <div class="owner-via">via: ${l.via}</div>
-      </td>
-      <td>
-        <div class="addr-line1">${l.prop_addr}</div>
+        <div class="addr-line1" style="margin-top:3px">${l.prop_addr}</div>
         <div class="addr-line2">${l.prop_city}</div>
-      </td>
-      <td>
-        <div class="addr-line1">${l.mail_addr}</div>
-        <div class="addr-line2">${l.mail_city}</div>
+        ${xlContactBadges(l)}
+        <button class="expand-btn" id="expand-btn-${i}" onclick="toggleDetail(${i})">Details ▾</button>
       </td>
       <td><span class="amount">${fmtMoney(l.amount)}</span></td>
-      <td><div class="flag-list">${stackedPill(l.distress_stack_count)}${flagPills(l.flags)}</div>${xlContactBadges(l)}</td>
+      <td><div class="flag-list">${stackedPill(l.distress_stack_count)}${flagPills(l.flags)}</div></td>
       <td style="color: var(--text-3);">—</td>
       <td>
         <div class="doc-num">#${l.doc_num}</div>
@@ -1243,9 +1251,9 @@ function renderTable() {
       </td>
     </tr>
     <tr class="detail-row" id="detail-row-${i}" style="display:none">
-      <td colspan="11" style="padding:0">${xlDetailPanel(l)}</td>
+      <td colspan="9" style="padding:0">${xlDetailPanel(l)}</td>
     </tr>
-  `).join('') || `<tr><td colspan="11" style="text-align: center; padding: 40px; color: var(--text-3);">No leads match the current filters.</td></tr>`;
+  `).join('') || `<tr><td colspan="9" style="text-align: center; padding: 40px; color: var(--text-3);">No leads match the current filters.</td></tr>`;
 
   document.getElementById('shown-count').textContent = pageLeads.length;
   document.getElementById('total-count').textContent = leads.length;
