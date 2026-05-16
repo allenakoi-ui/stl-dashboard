@@ -321,6 +321,16 @@ tbody tr:hover { background: var(--hover-row); }
 .fp-toggle input:checked + .fp-toggle-track { background: var(--blue); }
 .fp-toggle input:checked + .fp-toggle-track::after { left: 19px; }
 .fp-footer { display: flex; justify-content: flex-end; gap: 8px; padding-top: 12px; border-top: 1px solid var(--border); margin-top: 4px; }
+
+/* Xleads contact badges */
+.contact-badge { display: inline-block; font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-top: 4px; margin-right: 3px; font-weight: 600; white-space: nowrap; }
+.phone-badge { background: var(--green-50); color: var(--green); border: 1px solid var(--green-100); }
+.email-badge { background: var(--blue-50); color: var(--blue); border: 1px solid var(--blue-100); }
+.detail-row td { background: var(--blue-50); border-bottom: 1px solid var(--border); }
+html[data-theme="dark"] .detail-row td { background: var(--blue-100); }
+.detail-panel { padding: 10px 16px; display: flex; flex-wrap: wrap; gap: 16px; align-items: center; font-size: 12px; color: var(--text-2); }
+.detail-panel .detail-item strong { color: var(--text); }
+.detail-panel .detail-no-contacts { color: var(--text-4); font-style: italic; }
 </style>
 </head>
 <body>
@@ -823,7 +833,13 @@ window.loadRealLeads = async function() {
         doc_src: 'Property Tax Roll',
         confidence_tier: l.confidence_tier || 'Low',
         missing_sources: l.missing_sources || [],
-        distress_stack_count: l.distress_stack_count || 0
+        distress_stack_count: l.distress_stack_count || 0,
+        xl_phone_1: l.xl_phone_1 || null,
+        xl_phone_2: l.xl_phone_2 || null,
+        xl_phone_3: l.xl_phone_3 || null,
+        xl_email_1: l.xl_email_1 || null,
+        xl_email_2: l.xl_email_2 || null,
+        xl_import_batch_id: l.xl_import_batch_id || null
       };
     });
 
@@ -1147,6 +1163,46 @@ function flagPills(flags) {
   }).join('');
 }
 
+function xlContactBadges(l) {
+  const phones = [l.xl_phone_1, l.xl_phone_2, l.xl_phone_3].filter(Boolean);
+  const emails = [l.xl_email_1, l.xl_email_2].filter(Boolean);
+  if (!phones.length && !emails.length) return '';
+  let out = '';
+  if (phones.length) out += `<span class="contact-badge phone-badge">&#128222; ${phones.length} phone${phones.length > 1 ? 's' : ''}</span>`;
+  if (emails.length) out += `<span class="contact-badge email-badge">&#9993; ${emails.length} email${emails.length > 1 ? 's' : ''}</span>`;
+  return out;
+}
+
+function xlDetailPanel(l) {
+  const phones = [
+    l.xl_phone_1 ? ['Phone 1', l.xl_phone_1] : null,
+    l.xl_phone_2 ? ['Phone 2', l.xl_phone_2] : null,
+    l.xl_phone_3 ? ['Phone 3', l.xl_phone_3] : null,
+  ].filter(Boolean);
+  const emails = [
+    l.xl_email_1 ? ['Email 1', l.xl_email_1] : null,
+    l.xl_email_2 ? ['Email 2', l.xl_email_2] : null,
+  ].filter(Boolean);
+  const hasBatch = !!l.xl_import_batch_id;
+  if (!phones.length && !emails.length && !hasBatch) {
+    return `<div class="detail-panel"><span class="detail-no-contacts">No contacts</span></div>`;
+  }
+  const phoneHtml = phones.map(([label, val]) =>
+    `<span class="detail-item">&#128222; <strong>${label}:</strong> ${val}</span>`).join('');
+  const emailHtml = emails.map(([label, val]) =>
+    `<span class="detail-item">&#9993; <strong>${label}:</strong> ${val}</span>`).join('');
+  const batchHtml = hasBatch
+    ? `<span class="detail-item" style="color:var(--text-3);">Source: Xleads / ${l.xl_import_batch_id}</span>`
+    : '';
+  return `<div class="detail-panel">${phoneHtml}${emailHtml}${batchHtml}</div>`;
+}
+
+function toggleDetail(i) {
+  const row = document.getElementById('detail-row-' + i);
+  if (!row) return;
+  row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
+}
+
 function renderTable() {
   state.search = document.getElementById('search-input').value || '';
   state.sort = document.getElementById('sort-select').value;
@@ -1157,8 +1213,8 @@ function renderTable() {
   const start = (state.page - 1) * state.pageSize;
   const pageLeads = leads.slice(start, start + state.pageSize);
 
-  tbody.innerHTML = pageLeads.map(l => `
-    <tr>
+  tbody.innerHTML = pageLeads.map((l, i) => `
+    <tr onclick="toggleDetail(${i})" style="cursor:pointer">
       <td>
         <div class="score-badge ${scoreClass(l.score)}">${l.score}</div>
         <div class="motiv-label">Motivation Score</div>
@@ -1179,12 +1235,15 @@ function renderTable() {
         <div class="addr-line2">${l.mail_city}</div>
       </td>
       <td><span class="amount">${fmtMoney(l.amount)}</span></td>
-      <td><div class="flag-list">${stackedPill(l.distress_stack_count)}${flagPills(l.flags)}</div></td>
+      <td><div class="flag-list">${stackedPill(l.distress_stack_count)}${flagPills(l.flags)}</div>${xlContactBadges(l)}</td>
       <td style="color: var(--text-3);">—</td>
       <td>
         <div class="doc-num">#${l.doc_num}</div>
         <a class="doc-link" href="#">${l.doc_src} ↗</a>
       </td>
+    </tr>
+    <tr class="detail-row" id="detail-row-${i}" style="display:none">
+      <td colspan="11" style="padding:0">${xlDetailPanel(l)}</td>
     </tr>
   `).join('') || `<tr><td colspan="11" style="text-align: center; padding: 40px; color: var(--text-3);">No leads match the current filters.</td></tr>`;
 
